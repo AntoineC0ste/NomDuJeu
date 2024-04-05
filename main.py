@@ -29,7 +29,8 @@ class Personnage(Entity):
         degat= self.atk + self.arme
         cible.subirDegat(degat)
     def subirDegat(self,degat):
-        self.pv -=degat
+        if degat>self.defense:
+            self.pv-=(degat-self.defense)
 
 
 
