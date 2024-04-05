@@ -9,4 +9,10 @@ class Entity :
         self.posY = posY
     
     def mvDroite(self, amount): 
+        self.posX += amount
+    def mvGauche(self, amount):
+        self.posX -= amount 
+    def mvHaut(self, amount):
         self.posY += amount
+    def mvBas(self, amount):
+        self.posY -= amount
