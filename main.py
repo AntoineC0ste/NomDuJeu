@@ -9,10 +9,16 @@ class Entity :
         self.posY = posY
     
     def mvDroite(self, amount): 
+        self.posX += amount
+    def mvGauche(self, amount):
+        self.posX -= amount 
+    def mvHaut(self, amount):
         self.posY += amount
+    def mvBas(self, amount):
+        self.posY -= amount
 
-class Arme :
-    def __init__(self,degat):
+#class Arme :
+    #def __init__(self,degat):
 
 class Personnage(Entity):
     def __init__(self, pv, atk, defense, inventaire, arme, posX=0, posY=0):
@@ -31,7 +37,7 @@ class Ennemis:
     def __init__(self,ennemisList):
         self.ennemisList= ennemisList
     
-    def ajouterEnnemi(self,attaque,vie,defense,arme,posX=0,posY=0):
+    #def ajouterEnnemi(self,attaque,vie,defense,arme,posX=0,posY=0):
         
         
         
