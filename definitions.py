@@ -45,8 +45,19 @@ class Ennemis:
 
     def retirer(self):
         pass # à coder plus tard, il faut trouver un moyen de trouver un élément de la liste par son nom ou un truc comme ça
-    def save(self, emplacementSave):
-        pass # Je le ferais ce soir je pense
+    def sauvegarder(self, emplacementSave):
+        with open("Sauvegardes/"+emplacementSave+".csv", 'w') as csvfile : # On ouvre/crée le fichier csv, puis on le manipule avec la bibliothèque csv.
+            sauvegarde = csv.writer(csvfile)
+            listeAttributs = []
 
+            for i in range(len(self.ennemisList)):
+                listeAttributs.append([])
+                for attribut in self.ennemisList[i].__dict__.values() :
+                    if isinstance(attribut, Arme):
+                        listeAttributs[i].append(attribut.degat)
+                    else:
+                        listeAttributs[i].append(attribut)
+                        
+            sauvegarde.writerow(listeAttributs)
         
         
