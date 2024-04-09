@@ -23,7 +23,7 @@ class Arme :
         self.degat = degat
 
 class Personnage(Entity):
-    def __init__(self, nom, pv, atk, defense, inventaire, arme, pos=[0,0]):
+    def __init__(self, nom, pv, atk, defense, pos, inventaire, arme):
         super().__init__(nom, pv, atk, defense, pos)
         self.inventaire = inventaire
         self.arme = arme
@@ -40,8 +40,8 @@ class Ennemis:
     def __init__(self,ennemisList=[]):
         self.ennemisList= ennemisList
     
-    def ajouter(self, nom, pv, atk, defense, inventaire, arme=None, pos=[0,0]):
-        self.ennemisList.append(Personnage(nom, pv, atk, defense, inventaire, arme, pos))
+    def ajouter(self, nom, pv, atk, defense, pos, inventaire, arme=None):
+        self.ennemisList.append(Personnage(nom, pv, atk, defense, pos, inventaire, arme))
 
     def retirer(self):
         pass # à coder plus tard, il faut trouver un moyen de trouver un élément de la liste par son nom ou un truc comme ça
@@ -59,5 +59,6 @@ class Ennemis:
                         listeAttributs[i].append(attribut)
                         
             sauvegarde.writerow(listeAttributs)
+
         
         
