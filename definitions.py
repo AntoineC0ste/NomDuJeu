@@ -23,7 +23,7 @@ class Arme :
         self.degat = degat
 
 class Personnage(Entity):
-    def __init__(self, nom, pv, atk, defense, pos, inventaire, arme):
+    def __init__(self, nom, pv, atk, defense, pos, inventaire, arme=None):
         super().__init__(nom, pv, atk, defense, pos)
         self.inventaire = inventaire
         self.arme = arme
@@ -57,8 +57,22 @@ class Ennemis:
                         listeAttributs[i].append(attribut.degat)
                     else:
                         listeAttributs[i].append(attribut)
-                        
-            sauvegarde.writerow(listeAttributs)
+            sauvegarde.writerow(listeAttributs)  # Si on met cette ligne dans la boucle principale, ça semble bien mais y'a des champs vides et ça plante quand il faut charger (peut être retirer ces champs vides ?)
 
-        
-        
+
+
+    def charger(self, emplacementSave):
+        with open("Sauvegardes/"+emplacementSave+".csv") as csvfile:
+            charge = csv.reader(csvfile)
+            self.ennemisList = []
+            ennemiActuel = []
+
+            for perso in charge :
+                ennemiActuel = perso
+                print(ennemiActuel[0]) # Semble afficher une liste ?
+                self.ennemisList.append(Personnage(ennemiActuel[0][0],ennemiActuel[0][1],ennemiActuel[0][2] ,ennemiActuel[0][3],ennemiActuel[0][5],ennemiActuel[0][6])) # Théoriquement ça marche, mais il ne semble pas comprendre que c'est une liste et le prend comme une chaîne de caractères
+                ennemiActuel = []
+
+                
+# Documentation du module csv :
+# https://docs.python.org/3/library/csv.html
