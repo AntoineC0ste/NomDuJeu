@@ -1,4 +1,4 @@
-import csv
+import json
 # Définition des classes de base
 
 class Entity :
@@ -46,32 +46,32 @@ class Ennemis:
 
     def retirer(self):
         pass # à coder plus tard, il faut trouver un moyen de trouver un élément de la liste par son nom ou un truc comme ça
+    
     def sauvegarder(self, emplacementSave):
-        with open("Sauvegardes/"+emplacementSave+".csv", 'w', newline='') as csvfile : # On ouvre/crée le fichier csv, puis on le manipule avec la bibliothèque csv.
-            sauvegarde = csv.writer(csvfile)
+        with open("Sauvegardes/"+emplacementSave+".json", 'w', newline='') as jsonfile : # On ouvre/crée le fichier json, puis on le manipule avec la bibliothèque.
+            ennemisDict = {}
+            for i in range(len(self.ennemisList)):  # Pour chaque ennemi
+                ennemiActuel = self.ennemisList[i].__dict__ # On crée un dictionnaire de ses attributs
+                if ennemiActuel['arme'] is not None:
+                    ennemiActuel['arme'] = ennemiActuel['arme'].__dict__
+                ennemisDict[self.ennemisList[i].nom] = ennemiActuel
+            json.dump(ennemisDict, jsonfile, indent=4) # Et on l'écrit dans le fichier JSON
 
-
-            for i in range(len(self.ennemisList)):
-                listeAttributs = []
-                for attribut in self.ennemisList[i].__dict__.values() :
-                    if isinstance(attribut, Arme):
-                        listeAttributs.append([attribut.nom, attribut.degat])
-                    else:
-                        listeAttributs.append(attribut)
-                sauvegarde.writerow(listeAttributs)
-
-
-
-    def charger(self, emplacementSave):
-        with open("Sauvegardes/"+emplacementSave+".csv", "r") as csvfile:
-            charge = csv.reader(csvfile)
+    def charger(self, emplacementSave): # C'est la même chose que la sauvegarde mais avec une liste d'attributs
+        with open("Sauvegardes/"+emplacementSave+".json", "r") as jsonfile:
+            charge = json.load(jsonfile)
+            
             self.ennemisList = []
-
-            for perso in charge :
-                print(perso[6])
-                if perso[6] != '':
-                    self.ennemisList.append(Personnage(perso[0],int(perso[1]),int(perso[2]),int(perso[3]),perso[4],perso[5],Arme(perso[6][0],int(perso[6][1])))) 
-                else:
-                    self.ennemisList.append(Personnage(perso[0],int(perso[1]),int(perso[2]),int(perso[3]),perso[4],perso[5],None)) 
+            ennemiActuel = []
+            print(charge)
+            for perso in charge.values():
+                for nom, attribut in perso.items():
+                    if nom == "arme" and attribut is not None:
+                        ennemiActuel.append(Arme(attribut['nom'], attribut['degat']))
+                    else:
+                        ennemiActuel.append(attribut)
+                
+                self.ennemisList.append(Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6]))
+                ennemiActuel = []
 
 
