@@ -1,4 +1,4 @@
-import csv
+import json
 import pygame
 # Définition des classes de base
 
@@ -47,41 +47,43 @@ class Ennemis:
     def retirer(self):
         pass # à coder plus tard, il faut trouver un moyen de trouver un élément de la liste par son nom ou un truc comme ça
     def sauvegarder(self, emplacementSave):
-        with open("Sauvegardes/"+emplacementSave+".csv", 'w') as csvfile : # On ouvre/crée le fichier csv, puis on le manipule avec la bibliothèque csv.
-            sauvegarde = csv.writer(csvfile)
-            listeAttributs = []
+        with open("Sauvegardes/"+emplacementSave+".json", 'w', newline='') as jsonfile : # On ouvre/crée le fichier json, puis on le manipule avec la bibliothèque.
+            ennemisDict = {}
+            for i in range(len(self.ennemisList)):  # Pour chaque ennemi
+                ennemiActuel = self.ennemisList[i].__dict__ # On crée un dictionnaire de ses attributs
+                if ennemiActuel['arme'] is not None:
+                    ennemiActuel['arme'] = ennemiActuel['arme'].__dict__
+                ennemisDict[self.ennemisList[i].nom] = ennemiActuel
+            json.dump(ennemisDict, jsonfile, indent=4) # Et on l'écrit dans le fichier JSON
 
-            for i in range(len(self.ennemisList)):
-                listeAttributs.append([])
-                for attribut in self.ennemisList[i].__dict__.values() :
-                    if isinstance(attribut, Arme):
-                        listeAttributs[i].append(attribut.degat)
-                    else:
-                        listeAttributs[i].append(attribut)
-            sauvegarde.writerow(listeAttributs)  # Si on met cette ligne dans la boucle principale, ça semble bien mais y'a des champs vides et ça plante quand il faut charger (peut être retirer ces champs vides ?)
-
-
-
-    def charger(self, emplacementSave):
-        with open("Sauvegardes/"+emplacementSave+".csv") as csvfile:
-            charge = csv.reader(csvfile)
+    def charger(self, emplacementSave): # C'est la même chose que la sauvegarde mais avec une liste d'attributs
+        with open("Sauvegardes/"+emplacementSave+".json", "r") as jsonfile:
+            charge = json.load(jsonfile)
+            
             self.ennemisList = []
             ennemiActuel = []
-
-            for perso in charge :
-                ennemiActuel = perso
-                print(ennemiActuel[0]) # Semble afficher une liste ?
-                self.ennemisList.append(Personnage(ennemiActuel[0][0],ennemiActuel[0][1],ennemiActuel[0][2] ,ennemiActuel[0][3],ennemiActuel[0][5],ennemiActuel[0][6])) # Théoriquement ça marche, mais il ne semble pas comprendre que c'est une liste et le prend comme une chaîne de caractères
+            print(charge)
+            for perso in charge.values():
+                for nom, attribut in perso.items():
+                    if nom == "arme" and attribut is not None:
+                        ennemiActuel.append(Arme(attribut['nom'], attribut['degat']))
+                    else:
+                        ennemiActuel.append(attribut)
+                
+                self.ennemisList.append(Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6]))
                 ennemiActuel = []
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, position=[]):
         super().__init__()
         self.sprite_sheet = pygame.image.load("Image/Joueur_Principale.png")
         self.image = self.get_image(0,0)
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
+        self.position = position
+    def update(self):
+        self.rect.topleft = self.position
     def get_image(self,x,y):
         image = pygame.Surface([32, 32])
         image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
