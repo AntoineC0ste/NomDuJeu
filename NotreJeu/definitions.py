@@ -81,10 +81,10 @@ class Player(pygame.sprite.Sprite):
         self.sprite_sheet = pygame.image.load("Image/Joueur_Principale.png")
         self.image = self.get_image(0,0)
         self.rect = self.image.get_rect()
-        
+        self.image.set_colorkey([0,0,0])
     def get_image(self,x,y):
-        image = pygame.Surface([16, 16])
-        image.blit(self.sprite_sheet, (0, 0), (x, y, 16, 16))
+        image = pygame.Surface([32, 32])
+        image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
         
         return image
         
