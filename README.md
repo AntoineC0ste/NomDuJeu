@@ -2,12 +2,14 @@
 
 # A faire :
 
-- [ ] Finir le système de sauvegarde des ennemis
+- [x] Finir le système de sauvegarde des ennemis
 - [ ] Créer un inventaire digne de ce nom (ou on fait juste avec une liste ?)
-- [ ] Commencer à travailler sur l'initialisation du jeu
+- [x] Commencer à travailler sur l'initialisation du jeu
     - [ ] Créer 
-        - [ ] Le personnage principal
+        - [x] Le personnage principal
         - [ ] Des ennemis de base
         - [ ] Des PNJ ?
         - [ ] Des quêtes ?
-    - [ ] Faire un quadrillage dans la console 
+- [ ] Réparer les collisions
+- [ ] Faire une vraie map (et trouver un tileset qui aille bien avec l'esthétique du jeu)
+- [ ] Réparer les sprites des ennemis (ils sont dans [[NotreJeu/initialisations.py]])
