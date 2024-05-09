@@ -36,7 +36,7 @@
 </data>
  </layer>
  <objectgroup id="5" name="Objet">
-  <object id="1" name="Spawn_Player1" x="238.667" y="230.667">
+  <object id="1" name="Spawn_Player1" x="240" y="224">
    <point/>
   </object>
  </objectgroup>
@@ -109,8 +109,8 @@
 </data>
  </layer>
  <objectgroup id="7" name="Collisions">
-  <object id="18" x="16.5455" y="160.667" width="206.076" height="30.6061"/>
-  <object id="20" x="256.125" y="160.125" width="208.818" height="31.3636"/>
+  <object id="18" x="15" y="160" width="208.534" height="31.8333"/>
+  <object id="20" name="Collisions" x="256.125" y="160.125" width="208.818" height="31.3636"/>
  </objectgroup>
  <layer id="4" name="Path" width="30" height="30">
   <properties>

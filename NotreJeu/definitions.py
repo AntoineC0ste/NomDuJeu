@@ -12,12 +12,13 @@ class Entity(pygame.sprite.Sprite) :
         self.vitesse = vitesse
         self.sprite = sprite # Pour la sauvegarde
         self.sprite_sheet = pygame.image.load(sprite)
-        self.image = self.get_image(0,32)
+        self.image = self.get_image(0,0)
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
         self.position = position
+        self.root = pygame.Rect(0,0,16,5)
+        self.posPrec = self.position.copy()
     
-
     def mvDroite(self, amount): 
         self.position[0] += amount # 0 pour la position sur x, 1 pour y
     def mvGauche(self, amount):
@@ -26,12 +27,19 @@ class Entity(pygame.sprite.Sprite) :
         self.position[1] -= amount
     def mvBas(self, amount):
         self.position[1] += amount
+    def reculer(self):
+        self.position = self.posPrec
+        self.update()
 
+    def sauvegarderPos(self, surface):
+        self.posPrec = self.position.copy()
     def animer(self, x, y):
         self.image = self.get_image(x,y)
         self.image.set_colorkey([0,0,0])
     def update(self):
         self.rect.topleft = self.position
+        self.root.midbottom = self.rect.midbottom
+
     def get_image(self,x,y):
         image = pygame.Surface([32, 32])
         image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))

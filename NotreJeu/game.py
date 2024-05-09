@@ -48,38 +48,35 @@ class Game:
         elif entree[pygame.K_LEFT]:
             self.player.mvGauche(self.player.vitesse)
             self.player.animer(32,0)
-    
-    def touche(self, calque):
-        layer_index = 0
-        for layer in self.tmx_data.visible_layers:
-            layer_index += 1
-            if isinstance(layer, pytmx.TiledObjectGroup):
-                if layer.name == calque:
-                    for obj in layer:
-                        if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.rect) == True:
-                            return True
-                        else:
-                            return False
 
 
     def run(self):
         clock = pygame.time.Clock()
         
+        loopCounter = 0
         running= True
         while running: #garder la fenetre ouverte
+            self.player.sauvegarderPos(self.screen)
             self.entreeDuJoueur()
             self.group.center(self.player.rect.center)
             self.group.update()
             self.group.draw(self.screen)
             pygame.display.flip() #pour actualiser tout en boucle a temps réel
 
-            if self.touche("Collisions") :
-                print("plouf")
-
+            layer_index = 0
+            for layer in self.tmx_data.visible_layers:
+                layer_index += 1
+                if isinstance(layer, pytmx.TiledObjectGroup):
+                    if layer.name == "Collisions":
+                        for obj in layer:
+                            if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
+                                self.player.reculer()
+                                print("hehe")
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT:   #detecte l'evenement "fenetre fermé"
                     running=False    # si oui running= False et la boucle sarrete
             clock.tick(60)
+            loopCounter += 1
         
         personnagePrincipal.sauvegarder("personnage")
         ennemisDeBase.sauvegarder("ennemis")
