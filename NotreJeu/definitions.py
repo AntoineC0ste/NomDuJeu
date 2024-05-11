@@ -16,7 +16,7 @@ class Entity(pygame.sprite.Sprite) :
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
         self.position = position
-        self.root = pygame.Rect(0,0,16,5)
+        self.root = pygame.Rect(0,0,16,25)
         self.posPrec = self.position.copy()
     
     def mvDroite(self, amount): 
