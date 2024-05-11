@@ -16,7 +16,7 @@ class Entity(pygame.sprite.Sprite) :
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
         self.position = position
-        self.root = pygame.Rect(0,0,16,25)
+        self.root = pygame.Rect(0,0,16,16)
         self.posPrec = self.position.copy()
     
     def mvDroite(self, amount): 
@@ -31,14 +31,14 @@ class Entity(pygame.sprite.Sprite) :
         self.position = self.posPrec
         self.update()
 
-    def sauvegarderPos(self, surface):
+    def sauvegarderPos(self):
         self.posPrec = self.position.copy()
     def animer(self, x, y):
         self.image = self.get_image(x,y)
         self.image.set_colorkey([0,0,0])
     def update(self):
         self.rect.topleft = self.position
-        self.root.midbottom = self.rect.midbottom
+        self.root.center = self.rect.center
 
     def get_image(self,x,y):
         image = pygame.Surface([32, 32])

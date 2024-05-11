@@ -56,7 +56,7 @@ class Game:
         loopCounter = 0
         running= True
         while running: #garder la fenetre ouverte
-            self.player.sauvegarderPos(self.screen)
+            self.player.sauvegarderPos()
             self.entreeDuJoueur()
             self.group.center(self.player.rect.center)
             self.group.update()
@@ -71,7 +71,7 @@ class Game:
                         for obj in layer:
                             if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
                                 self.player.reculer()
-                                print("hehe")
+                                
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT:   #detecte l'evenement "fenetre fermé"
                     running=False    # si oui running= False et la boucle sarrete
