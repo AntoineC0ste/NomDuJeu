@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="46">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="53">
  <tileset firstgid="1" source="Texture_Nature.tsx"/>
  <layer id="1" name="Background" width="50" height="50">
   <data encoding="csv">
@@ -238,6 +238,13 @@
   <object id="42" x="496" y="368.5" width="190.5" height="31"/>
   <object id="43" x="672.5" y="401" width="14.5" height="14"/>
   <object id="44" x="687" y="385" width="96" height="30"/>
+  <object id="46" x="-1.63934" y="190.984" width="16.3934" height="305.738"/>
+  <object id="47" x="12.2951" y="464.754" width="66.3934" height="31.1475"/>
+  <object id="48" x="46.7213" y="481.148" width="209.016" height="29.5082"/>
+  <object id="49" x="240.984" y="496.721" width="29.5082" height="126.23"/>
+  <object id="50" x="255.738" y="608.197" width="255.738" height="28.6885"/>
+  <object id="51" x="495.902" y="593.443" width="286.885" height="27.8689"/>
+  <object id="52" x="783.607" y="384.426" width="27.0492" height="240.984"/>
  </objectgroup>
  <layer id="9" name="deco_ext_couche2" width="50" height="50">
   <data encoding="csv">

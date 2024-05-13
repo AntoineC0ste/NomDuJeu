@@ -10,6 +10,6 @@
         - [ ] Des ennemis de base
         - [ ] Des PNJ ?
         - [ ] Des quêtes ?
-- [ ] Réparer les collisions
+- [x] Réparer les collisions
 - [ ] Faire une vraie map (et trouver un tileset qui aille bien avec l'esthétique du jeu)
-- [ ] Réparer les sprites des ennemis (ils sont dans [[NotreJeu/initialisations.py]])
+- [x] Réparer les sprites des ennemis (ils sont dans [[NotreJeu/initialisations.py]])

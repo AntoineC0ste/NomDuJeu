@@ -13,6 +13,7 @@ class Game:
     def __init__(self):
         self.screen=pygame.display.set_mode((1000, 576))
         pygame.display.set_caption(("notreJeu")) #c'est juste le nom
+        self.running= True
         
         #charger la carte
         self.tmx_data = pytmx.util_pygame.load_pygame("Carte/Carte.tmx")
@@ -22,8 +23,8 @@ class Game:
         #generer un joueur
         spawn1 = self.tmx_data.get_object_by_name("Spawn_Player1")
         self.player = personnagePrincipal.ennemisList["Hero"]
-        # Placer au point d'apparition
-        if not os.path.exists("Sauvegardes/personnage.json"):
+
+        if not os.path.exists("Sauvegardes/personnage.json"): # Si une sauvegarde n'existe pas
             self.player.position[0] = spawn1.x
             self.player.position[1] = spawn1.y
         
@@ -48,36 +49,50 @@ class Game:
         elif entree[pygame.K_LEFT]:
             self.player.mvGauche(self.player.vitesse)
             self.player.animer(32,0)
+        # TODO: intégrer l'animation dans la méthode de mouvement pour les ennemis.
+
+    def boucleEnnemis(self, timer):
+        if timer%15 == 1: # Délai d'un quart de seconde (60/4)
+            for ennemi in ennemisDeBase.ennemisList.values():
+                ennemi.sauvegarderPos()
+                ennemi.activation(self.player.position)
+
+        
 
 
     def run(self):
         clock = pygame.time.Clock()
-        
-        loopCounter = 0
-        running= True
-        while running: #garder la fenetre ouverte
+        ennemisTimer = 0 # Chrono qui augmente toutes les 60ièmes de secondes pour gérer les ennemis
+
+        while self.running: #garder la fenetre ouverte
+            ennemisTimer += 1
+            self.boucleEnnemis(ennemisTimer)
             self.player.sauvegarderPos()
             self.entreeDuJoueur()
             self.group.center(self.player.rect.center)
             self.group.update()
             self.group.draw(self.screen)
+
             pygame.display.flip() #pour actualiser tout en boucle a temps réel
 
             layer_index = 0
-            for layer in self.tmx_data.visible_layers:
+            for layer in self.tmx_data.visible_layers: # Trouve la couche de collisions dans le tmx.
                 layer_index += 1
                 if isinstance(layer, pytmx.TiledObjectGroup):
                     if layer.name == "Collisions":
-                        for obj in layer:
+                        for obj in layer: # Vérifie pour chaque objet l'état de collision du personnage et des ennemis
                             if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
                                 self.player.reculer()
-                                
+                            for ennemi in ennemisDeBase.ennemisList.values():
+                                if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(ennemi.root):
+                                    ennemi.reculer()
+                            # TODO: Créer des collisions entre joueur et ennemis (en utilisant le Rect du sprite)
+
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT:   #detecte l'evenement "fenetre fermé"
-                    running=False    # si oui running= False et la boucle sarrete
+                    self.running=False    # si oui running= False et la boucle sarrete
             clock.tick(60)
-            loopCounter += 1
-        
+
         personnagePrincipal.sauvegarder("personnage")
         ennemisDeBase.sauvegarder("ennemis")
         pygame.quit()   #quitter le jeu
