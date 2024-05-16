@@ -52,7 +52,7 @@ class Game:
         # TODO: intégrer l'animation dans la méthode de mouvement pour les ennemis.
 
     def boucleEnnemis(self, timer):
-        if timer%15 == 1: # Délai d'un quart de seconde (60/4)
+        if timer%5 == 1: # Délai d'un douzième de seconde (60/12 = 5)
             for ennemi in ennemisDeBase.ennemisList.values():
                 ennemi.sauvegarderPos()
                 ennemi.activation(self.player.position)

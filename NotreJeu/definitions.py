@@ -64,28 +64,25 @@ class Personnage(Entity):
             self.pv-=(degat-self.defense)
     def activation(self, posHero):
         vecteurDistancePerso = [posHero[0] - self.position[0], posHero[1] - self.position[1]]
-        if (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5 < 150: # On normalise le vecteur
-            nbr = randint(0,3)
-            if nbr == 0: self.mvHaut(self.vitesse)
-            elif nbr == 1: self.mvBas(self.vitesse)
-            elif nbr == 2: self.mvDroite(self.vitesse)
-            elif nbr == 3: self.mvGauche(self.vitesse)
-        # Mouvements aléatoires pour le moment
-        # TODO: Créer une fonction qui permet de se déplacer vers le joueur à partir du vecteur d'origine de l'entité vers le joueur. 
+        distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5
+        if distancePerso < 300: # On normalise le vecteur
+            if abs(vecteurDistancePerso[0]) > abs(vecteurDistancePerso[1]): # On prend les valeurs absolues
+                if vecteurDistancePerso[0] > 0:
+                    self.mvDroite(self.vitesse)
+                    self.animer(32,32)
+                else:
+                    self.mvGauche(self.vitesse)
+                    self.animer(32,0)
+                
+            else:
+                if vecteurDistancePerso[1] > 0:
+                    self.mvBas(self.vitesse)
+                    self.animer(0,0)
+                else:
+                    self.mvHaut(self.vitesse)
+                    self.animer(0,32)
 
-# Je sais pas si on fait vraiment une nouvelle classe
-# class Ennemi(Personnage):
-#     def __init__(self, nom, pv, atk, defense, vitesse, sprite, position, inventaire, arme=None):
-#         super.__init__(self, nom, pv, atk, defense, vitesse, sprite, position, inventaire, arme)
 
-#     def activation(self, posHero):
-#         if (self.position - posHero) < 20:
-#             nbr = randint(0,3)
-#             if nbr == 0: self.mvHaut(self.vitesse)
-#             elif nbr == 1: self.mvBas(self.vitesse)
-#             elif nbr == 2: self.mvDroite(self.vitesse)
-#             elif nbr == 3: self.mvGauche(self.vitesse)
-        # else: pass
 class Ennemis:
     def __init__(self,ennemisList={}):
         self.ennemisList= ennemisList
