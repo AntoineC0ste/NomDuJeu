@@ -103,6 +103,7 @@ class Ennemis:
                 ennemiActuel["atk"] = perso["atk"]
                 ennemiActuel["defense"] = perso["defense"]
                 ennemiActuel["vitesse"] = perso["vitesse"]
+                
                 ennemiActuel["sprite"] = perso["sprite"]
                 ennemiActuel["position"] = perso["position"]
                 ennemiActuel["inventaire"] = perso["inventaire"]
