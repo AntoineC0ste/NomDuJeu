@@ -56,31 +56,42 @@ class Personnage(Entity):
         super().__init__(nom, pv, atk, defense, vitesse, sprite, position)
         self.inventaire = inventaire
         self.arme = arme
+        self.attackReady = True
     def attaquer(self,cible):
-        degat= self.atk + self.arme
+        if self.arme is not None:
+            degat = self.atk + self.arme.degat
+        else:
+            degat = self.atk
         cible.subirDegat(degat)
+
     def subirDegat(self,degat):
-        if degat>self.defense:
+        if degat > self.defense:
             self.pv-=(degat-self.defense)
-    def activation(self, posHero):
-        vecteurDistancePerso = [posHero[0] - self.position[0], posHero[1] - self.position[1]]
-        distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5
-        if distancePerso < 225: # On normalise le vecteur
-             # On prend les valeurs absolues
-            if self.position[0] < posHero[0]:
+
+    def activation(self, hero, timer):
+        vecteurDistancePerso = [hero.position[0] - self.position[0], hero.position[1] - self.position[1]]
+        distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5 # On normalise le vecteur
+        if  40 < distancePerso < 300: 
+            if self.position[0] < hero.position[0]:
                 self.mvDroite(self.vitesse)
                 self.animer(32,32)
-            elif self.position[0]>posHero[0]:
+            elif self.position[0]>hero.position[0]:
                 self.mvGauche(self.vitesse)
                 self.animer(32,0)
             else:
-                if self.position[1]>posHero[1]:
+                if self.position[1]>hero.position[1]:
                     self.mvHaut(self.vitesse)
                     self.animer(0,32)
-                elif self.position[1]<posHero[1]:
+                elif self.position[1]<hero.position[1]:
                     self.mvBas(self.vitesse)
                     self.animer(0,0)
-           
+
+            
+   
+
+        # if distancePerso < 34:
+        #     if timer%360 == 1:
+        #         pass # TODO gérer les attaques
 
 
 class Ennemis:
