@@ -1,4 +1,4 @@
 echo "Controles : fleches directionnelles"
-python NotreJeu/main.py
+py NotreJeu/main.py
 pause
 LancerLeJeu.bat
