@@ -43,7 +43,7 @@ class Game:
         elif entree[pygame.K_UP]:
             self.player.mvHaut(self.player.vitesse)
             self.player.animer(0,32)
-            print("PK")
+            
         elif entree[pygame.K_RIGHT]:
             self.player.mvDroite(self.player.vitesse)
             self.player.animer(32,32)

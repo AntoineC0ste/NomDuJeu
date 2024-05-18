@@ -65,22 +65,22 @@ class Personnage(Entity):
     def activation(self, posHero):
         vecteurDistancePerso = [posHero[0] - self.position[0], posHero[1] - self.position[1]]
         distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5
-        if distancePerso < 300: # On normalise le vecteur
-            if abs(vecteurDistancePerso[0]) > abs(vecteurDistancePerso[1]): # On prend les valeurs absolues
-                if vecteurDistancePerso[0] > 0:
-                    self.mvDroite(self.vitesse)
-                    self.animer(32,32)
-                else:
-                    self.mvGauche(self.vitesse)
-                    self.animer(32,0)
-                
+        if distancePerso < 225: # On normalise le vecteur
+             # On prend les valeurs absolues
+            if self.position[0] < posHero[0]:
+                self.mvDroite(self.vitesse)
+                self.animer(32,32)
+            elif self.position[0]>posHero[0]:
+                self.mvGauche(self.vitesse)
+                self.animer(32,0)
             else:
-                if vecteurDistancePerso[1] > 0:
-                    self.mvBas(self.vitesse)
-                    self.animer(0,0)
-                else:
+                if self.position[1]>posHero[1]:
                     self.mvHaut(self.vitesse)
                     self.animer(0,32)
+                elif self.position[1]<posHero[1]:
+                    self.mvBas(self.vitesse)
+                    self.animer(0,0)
+           
 
 
 class Ennemis:
