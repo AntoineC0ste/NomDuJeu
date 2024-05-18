@@ -14,6 +14,7 @@ class Game:
         self.screen=pygame.display.set_mode((1000, 576))
         pygame.display.set_caption(("notreJeu")) #c'est juste le nom
         self.running= True
+        self.isded = False # Si le joueur est mort
         
         #charger la carte
         self.tmx_data = pytmx.util_pygame.load_pygame("Carte/Carte.tmx")
@@ -24,16 +25,21 @@ class Game:
         spawn1 = self.tmx_data.get_object_by_name("Spawn_Player1")
         self.player = personnagePrincipal.ennemisList["Hero"]
 
-        if not os.path.exists("Sauvegardes/personnage.json"): # Si une sauvegarde n'existe pas
+        if not os.path.exists("Sauvegardes/personnage.json") or self.isded: # Si une sauvegarde n'existe pas ou que le joueur doit respawn
             self.player.position[0] = spawn1.x
             self.player.position[1] = spawn1.y
         
 
         #dessiner le groupe de calques
-        self.group = pyscroll.PyscrollGroup(map_layer=map_layer,default_layer=4)
+        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=4)
         self.group.add(self.player)
         for personnage in ennemisDeBase.ennemisList.values():
             self.group.add(personnage)
+    
+    def changerDeZone(self, spawnPoint, timer):
+        # if timer%30 == 1:
+            self.player.position[0] = 0
+            self.player.position[1] = 0
 
     def entreeDuJoueur(self):
         entree = pygame.key.get_pressed() # Liste des entrées du joueur
@@ -49,13 +55,18 @@ class Game:
         elif entree[pygame.K_LEFT]:
             self.player.mvGauche(self.player.vitesse)
             self.player.animer(32,0)
-        # TODO: intégrer l'animation dans la méthode de mouvement pour les ennemis.
+        elif entree[pygame.K_e]:
+            self.player.attackReady = True
 
     def boucleEnnemis(self, timer):
         if timer%5 == 1: # Délai d'un douzième de seconde (60/12 = 5)
             for ennemi in ennemisDeBase.ennemisList.values():
                 ennemi.sauvegarderPos()
-                ennemi.activation(self.player.position)
+                ennemi.activation(self.player, timer)
+                if ennemi.pv <= 0:
+                    ennemi.animer(0,0)
+                    ennemisDeBase.retirer(str(ennemi.nom))
+                    break
 
         
 
@@ -79,6 +90,11 @@ class Game:
             for layer in self.tmx_data.visible_layers: # Trouve la couche de collisions dans le tmx.
                 layer_index += 1
                 if isinstance(layer, pytmx.TiledObjectGroup):
+                    if layer.name == "Objets":
+                        for obj in layer:
+                            if obj.name == "TP":
+                                if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
+                                    self.tmx_data = self.changerDeZone(self.tmx_data.get_object_by_name("Spawn_Player1"), ennemisTimer)
                     if layer.name == "Collisions":
                         for obj in layer: # Vérifie pour chaque objet l'état de collision du personnage et des ennemis
                             if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
@@ -86,14 +102,26 @@ class Game:
                             for ennemi in ennemisDeBase.ennemisList.values():
                                 if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(ennemi.root):
                                     ennemi.reculer()
+                                if self.player.root.colliderect(ennemi.root):
+                                    ennemi.reculer()
+                                    self.player.reculer()
+                                    if self.player.attackReady:
+                                        self.player.attaquer(ennemi)
                             # TODO: Créer des collisions entre joueur et ennemis (en utilisant le Rect du sprite)
 
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT:   #detecte l'evenement "fenetre fermé"
                     self.running=False    # si oui running= False et la boucle sarrete
+            if self.player.pv == 0:
+                self.isded = True
+                personnagePrincipal.ennemisList["Hero"].pv = 50
+                personnagePrincipal.sauvegarder("personnage")
+                self.running = False
+            else:
+                personnagePrincipal.sauvegarder("personnage")
             clock.tick(60)
 
-        personnagePrincipal.sauvegarder("personnage")
+        
         ennemisDeBase.sauvegarder("ennemis")
         pygame.quit()   #quitter le jeu
 

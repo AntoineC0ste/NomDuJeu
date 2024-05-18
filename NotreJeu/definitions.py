@@ -56,16 +56,22 @@ class Personnage(Entity):
         super().__init__(nom, pv, atk, defense, vitesse, sprite, position)
         self.inventaire = inventaire
         self.arme = arme
+        self.attackReady = True
     def attaquer(self,cible):
-        degat= self.atk + self.arme
+        if self.arme is not None:
+            degat = self.atk + self.arme.degat
+        else:
+            degat = self.atk
         cible.subirDegat(degat)
+
     def subirDegat(self,degat):
-        if degat>self.defense:
+        if degat > self.defense:
             self.pv-=(degat-self.defense)
-    def activation(self, posHero):
-        vecteurDistancePerso = [posHero[0] - self.position[0], posHero[1] - self.position[1]]
-        distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5
-        if distancePerso < 300: # On normalise le vecteur
+
+    def activation(self, hero, timer):
+        vecteurDistancePerso = [hero.position[0] - self.position[0], hero.position[1] - self.position[1]]
+        distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5 # On normalise le vecteur
+        if  40 < distancePerso < 300: 
             if abs(vecteurDistancePerso[0]) > abs(vecteurDistancePerso[1]): # On prend les valeurs absolues
                 if vecteurDistancePerso[0] > 0:
                     self.mvDroite(self.vitesse)
@@ -73,7 +79,6 @@ class Personnage(Entity):
                 else:
                     self.mvGauche(self.vitesse)
                     self.animer(32,0)
-                
             else:
                 if vecteurDistancePerso[1] > 0:
                     self.mvBas(self.vitesse)
@@ -81,6 +86,9 @@ class Personnage(Entity):
                 else:
                     self.mvHaut(self.vitesse)
                     self.animer(0,32)
+        # if distancePerso < 34:
+        #     if timer%360 == 1:
+        #         pass # TODO gérer les attaques
 
 
 class Ennemis:
