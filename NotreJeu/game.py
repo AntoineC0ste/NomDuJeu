@@ -31,15 +31,10 @@ class Game:
         
 
         #dessiner le groupe de calques
-        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=4)
+        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=8)
         self.group.add(self.player)
         for personnage in ennemisDeBase.ennemisList.values():
             self.group.add(personnage)
-    
-    def changerDeZone(self, spawnPoint, timer):
-        # if timer%30 == 1:
-            self.player.position[0] = 0
-            self.player.position[1] = 0
 
     def entreeDuJoueur(self):
         entree = pygame.key.get_pressed() # Liste des entrées du joueur
@@ -95,7 +90,8 @@ class Game:
                         for obj in layer:
                             if obj.name == "TP":
                                 if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
-                                    self.tmx_data = self.changerDeZone(self.tmx_data.get_object_by_name("Spawn_Player1"), ennemisTimer)
+                                    self.screen.fill(pygame.Color(0,0,255))
+                                    self.player.teleport([1730,575])
                     if layer.name == "Collisions":
                         for obj in layer: # Vérifie pour chaque objet l'état de collision du personnage et des ennemis
                             if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):

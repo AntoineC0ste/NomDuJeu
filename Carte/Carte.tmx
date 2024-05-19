@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="16" nextobjectid="33">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="16" nextobjectid="38">
  <tileset firstgid="1" source="RPG_Nature_Tilset.tsx"/>
  <tileset firstgid="181" source="Dungeon_Tilset.tsx"/>
  <tileset firstgid="469" source="Dungeon_n2.tsx"/>
@@ -37,11 +37,15 @@
   <object id="28" x="1824" y="472" width="8" height="66"/>
   <object id="29" x="1632" y="472.417" width="192" height="37.6667"/>
   <object id="30" x="1632" y="512" width="7.41667" height="154"/>
+  <object id="34" x="700.727" y="145.455" width="92.7273" height="153.818"/>
+  <object id="35" x="670.182" y="145.455" width="30.9091" height="121.818"/>
+  <object id="36" x="652.727" y="210.545" width="26.1818" height="23.6364"/>
  </objectgroup>
- <objectgroup id="2" name="Spawn">
+ <objectgroup id="2" name="Objets">
   <object id="1" name="Spawn_Player1" x="466.666" y="469.758">
    <point/>
   </object>
+  <object id="37" name="TP" x="751" y="293.667" width="26" height="22.6667"/>
  </objectgroup>
  <group id="10" name="Dungeons">
   <layer id="7" name="sol_Dungeon" width="150" height="50">

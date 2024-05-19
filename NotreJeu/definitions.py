@@ -85,8 +85,10 @@ class Personnage(Entity):
                 elif self.position[1]<hero.position[1]:
                     self.mvBas(self.vitesse)
                     self.animer(0,0)
-
-            
+    
+    def teleport(self, coords):
+        self.position = coords
+        self.update()
    
 
         # if distancePerso < 34:
