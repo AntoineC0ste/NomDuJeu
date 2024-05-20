@@ -31,7 +31,7 @@ class Game:
         
 
         #dessiner le groupe de calques
-        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=4)
+        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=21)
         self.group.add(self.player)
         for personnage in ennemisDeBase.ennemisList.values():
             self.group.add(personnage)
