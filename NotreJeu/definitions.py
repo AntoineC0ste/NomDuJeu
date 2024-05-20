@@ -56,13 +56,14 @@ class Personnage(Entity):
         super().__init__(nom, pv, atk, defense, vitesse, sprite, position)
         self.inventaire = inventaire
         self.arme = arme
-        self.attackReady = True
+        self.attackReady = False
     def attaquer(self,cible):
         if self.arme is not None:
             degat = self.atk + self.arme.degat
         else:
             degat = self.atk
         cible.subirDegat(degat)
+        self.attackReady = False
 
     def subirDegat(self,degat):
         if degat > self.defense:
@@ -89,6 +90,7 @@ class Personnage(Entity):
     def teleport(self, coords):
         self.position = coords
         self.update()
+
    
 
         # if distancePerso < 34:

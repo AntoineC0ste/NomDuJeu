@@ -38,17 +38,17 @@ class Game:
 
     def entreeDuJoueur(self):
         entree = pygame.key.get_pressed() # Liste des entrées du joueur
-        if entree[pygame.K_DOWN]:
+        if entree[pygame.K_s] or entree[pygame.K_DOWN]:
             self.player.mvBas(self.player.vitesse)
             self.player.animer(0,0)
-        elif entree[pygame.K_UP]:
+        elif entree[pygame.K_z] or entree[pygame.K_UP]:
             self.player.mvHaut(self.player.vitesse)
             self.player.animer(0,32)
             
-        elif entree[pygame.K_RIGHT]:
+        elif entree[pygame.K_d] or entree[pygame.K_RIGHT]:
             self.player.mvDroite(self.player.vitesse)
             self.player.animer(32,32)
-        elif entree[pygame.K_LEFT]:
+        elif entree[pygame.K_q] or entree[pygame.K_LEFT]:
             self.player.mvGauche(self.player.vitesse)
             self.player.animer(32,0)
         elif entree[pygame.K_e]:
@@ -88,10 +88,11 @@ class Game:
                 if isinstance(layer, pytmx.TiledObjectGroup):
                     if layer.name == "Objets":
                         for obj in layer:
-                            if obj.name == "TP":
-                                if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
-                                    self.screen.fill(pygame.Color(0,0,255))
-                                    self.player.teleport([1730,575])
+                            if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
+                                if obj.name == "TP_to_Dungeon01":
+                                        self.player.teleport([self.tmx_data.get_object_by_name("Dungeon01").x,self.tmx_data.get_object_by_name("Dungeon01").y])
+                                elif obj.name == "TP_from_Dungeon01":
+                                        self.player.teleport([self.tmx_data.get_object_by_name("TP_to_Dungeon01").x, self.tmx_data.get_object_by_name("TP_to_Dungeon01").y])
                     if layer.name == "Collisions":
                         for obj in layer: # Vérifie pour chaque objet l'état de collision du personnage et des ennemis
                             if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
@@ -99,11 +100,12 @@ class Game:
                             for ennemi in ennemisDeBase.ennemisList.values():
                                 if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(ennemi.root):
                                     ennemi.reculer()
-                                if self.player.root.colliderect(ennemi.root):
-                                    ennemi.reculer()
-                                    self.player.reculer()
+
                                     if self.player.attackReady:
                                         self.player.attaquer(ennemi)
+                                    ennemi.reculer()
+                                    self.player.reculer()
+
                             # TODO: Créer des collisions entre joueur et ennemis (en utilisant le Rect du sprite)
 
             for event in pygame.event.get(): 
