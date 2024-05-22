@@ -92,10 +92,8 @@ class Game:
                     if layer.name == "Objets":
                         for obj in layer:
                             if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
-                                if obj.name == "TP_to_Dungeon01":
-                                        self.player.teleport([self.tmx_data.get_object_by_name("Dungeon01").x,self.tmx_data.get_object_by_name("Dungeon01").y])
-                                elif obj.name == "TP_from_Dungeon01":
-                                        self.player.teleport([self.tmx_data.get_object_by_name("TP_to_Dungeon01").x, self.tmx_data.get_object_by_name("TP_to_Dungeon01").y])
+                                if obj.name == "TP_to_Dungeon01" or "TP_from_Dungeon01": # On pourrait faire une liste de points de téléportation et mettre la condition "if obj.name in list"
+                                        self.player.teleport(obj.type.split()) # On téléporte vers les coordonnées de la "classe" dans Tiled
                     if layer.name == "Collisions":
                         for obj in layer: # Vérifie pour chaque objet l'état de collision du personnage et des ennemis
                             if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):

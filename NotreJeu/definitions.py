@@ -88,7 +88,8 @@ class Personnage(Entity):
                     self.animer(0,0)
     
     def teleport(self, coords):
-        self.position = coords
+        '''Téléporte le personnage vers l'objet spécifié'''
+        self.position = [int(coords[0]), int(coords[1])]
         self.update()
 
    
