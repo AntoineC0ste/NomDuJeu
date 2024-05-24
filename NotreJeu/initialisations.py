@@ -6,12 +6,15 @@ from definitions import *
 ennemisDeBase = Ennemis()
 personnagePrincipal = Ennemis()
 
+baton = Arme("baton", 2, "Image/baton.png") # TODO changer l'image pour un vrai baton
+
 if not os.path.exists("Sauvegardes/personnage.json"):
 
     personnagePrincipal.ajouter("Hero", 50, 5, 2, 3,
                         sprite="Image/Joueur_Principale.png",
                         position=[0, 0],
-                        inventaire=[])
+                        inventaire=[],
+                        arme=baton)
 else:
     personnagePrincipal.charger("personnage")
 

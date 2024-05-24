@@ -36,8 +36,11 @@ class Game:
 
 
         self.group.add(self.player)
+        self.group.add(self.player.arme)
         for personnage in ennemisDeBase.ennemisList.values():
             self.group.add(personnage)
+            if personnage.arme is not None:
+                self.group.add(personnage.arme)
 
     def entreeDuJoueur(self):
         entree = pygame.key.get_pressed() # Liste des entrées du joueur

@@ -38,7 +38,7 @@ class Entity(pygame.sprite.Sprite) :
         self.image = self.get_image(x,y)
         self.image.set_colorkey([0,0,0])
     def update(self):
-        self.rect.topleft = self.position
+        self.rect.center = self.position
         self.root.center = self.rect.center
 
     def get_image(self,x,y):
@@ -46,10 +46,25 @@ class Entity(pygame.sprite.Sprite) :
         image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
         return image
 
-class Arme :
-    def __init__(self, nom ,degat):
+class Arme(pygame.sprite.Sprite):
+    def __init__(self, nom, degat, sprite):
+        super().__init__()
         self.nom = nom
         self.degat = degat
+        self.sprite = sprite
+        self.sprite_sheet = pygame.image.load(sprite)
+        self.image = self.get_image(0,0)
+        self.rect = self.image.get_rect()
+        self.image.set_colorkey([0,0,0])
+
+    def animer(self, x, y):
+        self.image = self.get_image(x,y)
+        self.image.set_colorkey([0,0,0])
+    def get_image(self,x,y):
+        image = pygame.Surface([32, 32])
+        image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
+        return image
+
 
 class Personnage(Entity):
     def __init__(self, nom, pv, atk, defense, vitesse, sprite, position, inventaire, arme=None):
@@ -57,6 +72,13 @@ class Personnage(Entity):
         self.inventaire = inventaire
         self.arme = arme
         self.attackReady = False
+
+    def update(self):
+        self.rect.center = self.position
+        self.root.center = self.rect.center
+        if self.arme is not None:
+            self.arme.rect.center = self.rect.center
+    
     def attaquer(self,cible):
         if self.arme is not None:
             degat = self.atk + self.arme.degat
@@ -72,18 +94,19 @@ class Personnage(Entity):
     def activation(self, hero, timer):
         vecteurDistancePerso = [hero.position[0] - self.position[0], hero.position[1] - self.position[1]]
         distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5 # On normalise le vecteur
-        if  40 < distancePerso < 300: 
-            if self.position[0] < hero.position[0]:
-                self.mvDroite(self.vitesse)
-                self.animer(32,32)
-            elif self.position[0]>hero.position[0]:
-                self.mvGauche(self.vitesse)
-                self.animer(32,0)
+        if  40 < distancePerso < 300:
+            if randint(0,1) == 0:
+                if self.position[0] < hero.position[0]: # Si a gauche
+                    self.mvDroite(self.vitesse)
+                    self.animer(32,32)
+                else:
+                    self.mvGauche(self.vitesse)
+                    self.animer(32,0)
             else:
-                if self.position[1]>hero.position[1]:
+                if self.position[1] > hero.position[1]:
                     self.mvHaut(self.vitesse)
                     self.animer(0,32)
-                elif self.position[1]<hero.position[1]:
+                else:
                     self.mvBas(self.vitesse)
                     self.animer(0,0)
     
@@ -123,10 +146,12 @@ class Ennemis:
                 ennemiActuel["sprite"] = perso["sprite"]
                 ennemiActuel["position"] = perso["position"]
                 ennemiActuel["inventaire"] = perso["inventaire"]
-                ennemiActuel["arme"] = perso["arme"]
 
-                if ennemiActuel['arme'] is not None:
-                    ennemiActuel['arme'] = ennemiActuel['arme'].__dict__
+                if perso['arme'] is not None:
+                    ennemiActuel['arme'] = [perso['arme'].__dict__["nom"], perso['arme'].__dict__["degat"], perso['arme'].__dict__["sprite"]]
+                else:
+                    ennemiActuel["arme"] = perso["arme"]
+    
                 ennemisDict[perso["nom"]] = ennemiActuel
 
             json.dump(ennemisDict, jsonfile, indent=4) # Et on l'écrit dans le fichier JSON
@@ -140,7 +165,7 @@ class Ennemis:
             for perso in charge.values():
                 for nom, attribut in perso.items():
                     if nom == "arme" and attribut is not None:
-                        ennemiActuel.append(Arme(attribut['nom'], attribut['degat']))
+                        ennemiActuel.append(Arme(attribut[0], attribut[1], attribut[2]))
                     else:
                         ennemiActuel.append(attribut)
                 
