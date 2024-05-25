@@ -72,6 +72,7 @@ class Personnage(Entity):
         self.inventaire = inventaire
         self.arme = arme
         self.attackReady = False
+        
 
     def update(self):
         self.rect.center = self.position

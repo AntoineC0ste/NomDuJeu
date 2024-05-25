@@ -1,4 +1,3 @@
-# import pytmx
 import os
 from definitions import *
 
@@ -6,7 +5,7 @@ from definitions import *
 ennemisDeBase = Ennemis()
 personnagePrincipal = Ennemis()
 
-baton = Arme("baton", 2, "Image/baton.png") # TODO changer l'image pour un vrai baton
+baton = Arme("baton", 2, "Image/Gobelin.png") # TODO changer l'image pour un vrai baton
 
 if not os.path.exists("Sauvegardes/personnage.json"):
 
