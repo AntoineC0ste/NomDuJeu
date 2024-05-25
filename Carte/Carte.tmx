@@ -1570,10 +1570,10 @@
   <object id="68" x="554.909" y="842.545" width="7.81818" height="9.63636"/>
   <object id="69" x="843.545" y="362.545" width="7.63636" height="10.5455"/>
   <object id="70" x="523.091" y="236.727" width="8.54545" height="7.27273"/>
-  <object id="71" x="944" y="317.333" width="94.6667" height="2.66667"/>
-  <object id="72" x="945.333" y="384" width="92" height="2.66667"/>
-  <object id="73" x="3416" y="638.667" width="134.667" height="1.33333"/>
-  <object id="74" x="3410.67" y="702.667" width="141.333"/>
+  <object id="71" x="944" y="317.333" width="124" height="2.66667"/>
+  <object id="72" x="945.333" y="384" width="124" height="2.66667"/>
+  <object id="73" x="3412" y="637.167" width="138.667" height="2.83333"/>
+  <object id="74" x="3410.67" y="702.667" width="141.333" height="1.75"/>
   <object id="76" x="3440" y="705.333" width="92" height="574.667"/>
   <object id="77" x="3440" y="2" width="90" height="632"/>
   <object id="78" x="3905.33" y="161.333" width="156" height="29.75"/>
