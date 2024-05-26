@@ -49,14 +49,14 @@ class Game:
             self.player.animer(0,0)
         elif entree[pygame.K_z] or entree[pygame.K_UP]:
             self.player.mvHaut(self.player.vitesse)
-            self.player.animer(0,32)
+            self.player.animer(0,96)
             
         elif entree[pygame.K_d] or entree[pygame.K_RIGHT]:
             self.player.mvDroite(self.player.vitesse)
-            self.player.animer(32,32)
+            self.player.animer(0,64)
         elif entree[pygame.K_q] or entree[pygame.K_LEFT]:
             self.player.mvGauche(self.player.vitesse)
-            self.player.animer(32,0)
+            self.player.animer(0,32)
         elif entree[pygame.K_e]:
             self.player.attackReady = True
 
