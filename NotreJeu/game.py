@@ -21,6 +21,10 @@ class Game:
         map_data = pyscroll.data.TiledMapData(self.tmx_data)
         map_layer = pyscroll.orthographic.BufferedRenderer(map_data,self.screen.get_size())
         map_layer.zoom = 2.5
+        self.listeTP = []
+        for obj in self.tmx_data.get_layer_by_name("Objets"):
+            if "TP" in obj.name:
+                self.listeTP.append(obj.name)
         #generer un joueur
         spawn1 = self.tmx_data.get_object_by_name("Spawn_Player1")
         self.player = personnagePrincipal.ennemisList["Hero"]
@@ -95,7 +99,7 @@ class Game:
                     if layer.name == "Objets":
                         for obj in layer:
                             if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
-                                if obj.name == "TP_to_Dungeon01" or "TP_from_Dungeon01": # On pourrait faire une liste de points de téléportation et mettre la condition "if obj.name in list"
+                                if obj.name in self.listeTP: # On pourrait faire une liste de points de téléportation et mettre la condition "if obj.name in list"
                                         self.player.teleport(obj.type.split()) # On téléporte vers les coordonnées de la "classe" dans Tiled
                     if layer.name == "Collisions":
                         for obj in layer: # Vérifie pour chaque objet l'état de collision du personnage et des ennemis
