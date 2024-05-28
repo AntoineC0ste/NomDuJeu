@@ -19,12 +19,12 @@ else:
 
 if not os.path.exists("Sauvegardes/ennemis.json"):
 
-    ennemisDeBase.ajouter("Slime", 5,2,2,4,
+    ennemisDeBase.ajouter("Slime", 15,2,2,4,
                         sprite="Image/Slime.png",
                         position=[300,200],
                         inventaire=[])
 
-    ennemisDeBase.ajouter("MONSIEUR Porc", 15, 7, 3, 3,
+    ennemisDeBase.ajouter("MONSIEUR Porc", 25, 7, 3, 3,
                         sprite="Image/Sanglier.png",
                         position=[300,300],
                         inventaire=[])

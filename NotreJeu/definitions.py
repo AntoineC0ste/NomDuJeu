@@ -19,15 +19,20 @@ class Entity(pygame.sprite.Sprite) :
         self.position = position
         self.root = pygame.Rect(0,0,16,16)
         self.posPrec = self.position.copy()
+        self.facing = 0 # 0 = N ; 1 = E ; 2 = S ; 3 = O
     
     def mvDroite(self, amount): 
         self.position[0] += amount # 0 pour la position sur x, 1 pour y
+        self.facing = 1
     def mvGauche(self, amount):
         self.position[0] -= amount 
+        self.facing = 3
     def mvHaut(self, amount):
         self.position[1] -= amount
+        self.facing = 0
     def mvBas(self, amount):
         self.position[1] += amount
+        self.facing = 2
     def reculer(self):
         self.position = self.posPrec
         self.update()
@@ -78,7 +83,23 @@ class Personnage(Entity):
         self.rect.center = self.position
         self.root.center = self.rect.center
         if self.arme is not None:
-            self.arme.rect.center = self.rect.center
+            if self.attackReady:
+                # On suit la position du personnage
+                if self.facing == 0: 
+                    self.arme.rect.midbottom = self.rect.midtop
+                    self.arme.animer(32,32)
+                elif self.facing == 1: 
+                    self.arme.rect.midleft = self.rect.midright
+                    self.arme.animer(0,32)
+                elif self.facing == 2: 
+                    self.arme.rect.midtop = self.rect.midbottom
+                    self.arme.animer(0,0)
+                elif self.facing == 3: 
+                    self.arme.rect.midright = self.rect.midleft
+                    self.arme.animer(32,0)
+            else:
+                self.arme.animer(64,64) # On vient chercher une image transparente
+                
     
     def attaquer(self,cible):
         if self.arme is not None:
@@ -86,7 +107,6 @@ class Personnage(Entity):
         else:
             degat = self.atk
         cible.subirDegat(degat)
-        self.attackReady = False
 
     def subirDegat(self,degat):
         if degat > self.defense:

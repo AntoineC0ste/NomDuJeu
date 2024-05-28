@@ -21,10 +21,7 @@ class Game:
         map_data = pyscroll.data.TiledMapData(self.tmx_data)
         map_layer = pyscroll.orthographic.BufferedRenderer(map_data,self.screen.get_size())
         map_layer.zoom = 2.5
-        self.listeTP = []
-        for obj in self.tmx_data.get_layer_by_name("Objets"):
-            if "TP" in obj.name:
-                self.listeTP.append(obj.name)
+
         #generer un joueur
         spawn1 = self.tmx_data.get_object_by_name("Spawn_Player1")
         self.player = personnagePrincipal.ennemisList["Hero"]
@@ -54,7 +51,6 @@ class Game:
         elif entree[pygame.K_z] or entree[pygame.K_UP]:
             self.player.mvHaut(self.player.vitesse)
             self.player.animer(0,96)
-            
         elif entree[pygame.K_d] or entree[pygame.K_RIGHT]:
             self.player.mvDroite(self.player.vitesse)
             self.player.animer(0,64)
@@ -83,6 +79,8 @@ class Game:
 
         while self.running: #garder la fenetre ouverte
             ennemisTimer += 1
+            if ennemisTimer%30 == 1:
+                self.player.attackReady = False
             self.boucleEnnemis(ennemisTimer)
             self.player.sauvegarderPos()
             self.entreeDuJoueur()
@@ -99,7 +97,7 @@ class Game:
                     if layer.name == "Objets":
                         for obj in layer:
                             if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.root):
-                                if obj.name in self.listeTP: # On pourrait faire une liste de points de téléportation et mettre la condition "if obj.name in list"
+                                if "TP" in obj.name: 
                                         self.player.teleport(obj.type.split()) # On téléporte vers les coordonnées de la "classe" dans Tiled
                     if layer.name == "Collisions":
                         for obj in layer: # Vérifie pour chaque objet l'état de collision du personnage et des ennemis
@@ -108,13 +106,13 @@ class Game:
                             for ennemi in ennemisDeBase.ennemisList.values():
                                 if pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(ennemi.root):
                                     ennemi.reculer()
-
-                                    if self.player.attackReady:
-                                        self.player.attaquer(ennemi)
+                                elif self.player.root.colliderect(ennemi.root):
                                     ennemi.reculer()
                                     self.player.reculer()
-
-                            # TODO: Créer des collisions entre joueur et ennemis (en utilisant le Rect du sprite)
+                                elif self.player.arme.rect.colliderect(ennemi.rect):
+                                    if self.player.attackReady:
+                                        self.player.attaquer(ennemi)
+                                        self.player.attackReady = False                          
 
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT:   #detecte l'evenement "fenetre fermé"
