@@ -34,6 +34,3 @@ else:
 #(villageois)
 
 villageois.append(Npc("Paul", 3, "Image/Paul.png", position=[50,50]))
-
-print(villageois
-      )

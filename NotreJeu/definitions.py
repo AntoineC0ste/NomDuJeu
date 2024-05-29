@@ -41,7 +41,8 @@ class Entity(pygame.sprite.Sprite) :
         self.image.set_colorkey([0,0,0])
     def update(self):
         self.rect.center = self.position
-        self.root.midbottom = self.rect.center
+        self.root.midbottom = self.rect.midbottom
+
 
     def get_image(self,x,y):
         image = pygame.Surface([32, 32])
