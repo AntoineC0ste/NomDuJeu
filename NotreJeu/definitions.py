@@ -4,12 +4,9 @@ from random import *
 # Définition des classes de base
 
 class Entity(pygame.sprite.Sprite) :
-    def __init__(self, nom, pv, atk, defense, vitesse, sprite, position=[0,0]):  
+    def __init__(self, nom, vitesse, sprite, position=[0,0]):  
         super().__init__() 
         self.nom = nom
-        self.pv = pv
-        self.atk = atk
-        self.defense = defense
         self.vitesse = vitesse
         self.sprite = sprite # Pour la sauvegarde
         self.sprite_sheet = pygame.image.load(sprite)
@@ -53,7 +50,10 @@ class Entity(pygame.sprite.Sprite) :
 
 class Personnage(Entity):
     def __init__(self, nom, pv, atk, defense, vitesse, sprite, position, inventaire, arme=None):
-        super().__init__(nom, pv, atk, defense, vitesse, sprite, position)
+        super().__init__(nom, vitesse, sprite, position)
+        self.pv = pv
+        self.atk = atk
+        self.defense = defense
         self.inventaire = inventaire
         self.arme = arme
         self.attackReady = False
@@ -119,23 +119,11 @@ class Personnage(Entity):
         #     if timer%360 == 1:
         #         pass # TODO gérer les attaques
 
+class Npc(Entity):
+    def __init__(self, nom, vitesse, sprite, position=[0,0]):
+        super().__init__(nom, vitesse, sprite, position)  # Appel au constructeur de Entity et donc de pygame.sprite.Sprite
 
-
-class Npc(pygame.sprite.Sprite):
-    def __init__(self, nom, vitesse, sprite,position=[0,0]):
-        super().__init__()  # Appel au constructeur de pygame.sprite.Sprite
-        self.nom = nom
-        self.vitesse = vitesse 
-        self.sprite_sheet = pygame.image.load(sprite)
-        self.image = self.get_image(0,0)
-        self.rect = self.image.get_rect()
-        self.image.set_colorkey([0,0,0])
-        self.position=position
-    def get_image(self,x,y):
-        image = pygame.Surface([32, 32])
-        image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
-        return image
-
+        
 class Ennemis:
     def __init__(self,ennemisList={}):
         self.ennemisList= ennemisList
