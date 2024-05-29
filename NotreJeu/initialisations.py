@@ -4,7 +4,7 @@ from definitions import *
 
 ennemisDeBase = Ennemis()
 personnagePrincipal = Ennemis()
-
+villageois = []
 baton = Arme("baton", 2, "Image/Gobelin.png") # TODO changer l'image pour un vrai baton
 
 if not os.path.exists("Sauvegardes/personnage.json"):
@@ -30,3 +30,10 @@ if not os.path.exists("Sauvegardes/ennemis.json"):
                         inventaire=[])
 else:
     ennemisDeBase.charger("ennemis")
+
+#(villageois)
+
+villageois.append(Npc("Paul", 3, "Image/Paul.png", position=[50,50]))
+
+print(villageois
+      )

@@ -42,6 +42,8 @@ class Game:
             self.group.add(personnage)
             if personnage.arme is not None:
                 self.group.add(personnage.arme)
+        for villager in villageois:
+            self.group.add(villager)
 
     def entreeDuJoueur(self):
         entree = pygame.key.get_pressed() # Liste des entrées du joueur

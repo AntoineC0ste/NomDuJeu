@@ -17,7 +17,7 @@ class Entity(pygame.sprite.Sprite) :
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
         self.position = position
-        self.root = pygame.Rect(0,0,16,16)
+        self.root = pygame.Rect(0,0,5,5)
         self.posPrec = self.position.copy()
         self.facing = 0 # 0 = N ; 1 = E ; 2 = S ; 3 = O
     
@@ -44,32 +44,12 @@ class Entity(pygame.sprite.Sprite) :
         self.image.set_colorkey([0,0,0])
     def update(self):
         self.rect.center = self.position
-        self.root.center = self.rect.center
+        self.root.midbottom = self.rect.center
 
     def get_image(self,x,y):
         image = pygame.Surface([32, 32])
         image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
         return image
-
-class Arme(pygame.sprite.Sprite):
-    def __init__(self, nom, degat, sprite):
-        super().__init__()
-        self.nom = nom
-        self.degat = degat
-        self.sprite = sprite
-        self.sprite_sheet = pygame.image.load(sprite)
-        self.image = self.get_image(0,0)
-        self.rect = self.image.get_rect()
-        self.image.set_colorkey([0,0,0])
-
-    def animer(self, x, y):
-        self.image = self.get_image(x,y)
-        self.image.set_colorkey([0,0,0])
-    def get_image(self,x,y):
-        image = pygame.Surface([32, 32])
-        image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
-        return image
-
 
 class Personnage(Entity):
     def __init__(self, nom, pv, atk, defense, vitesse, sprite, position, inventaire, arme=None):
@@ -135,13 +115,26 @@ class Personnage(Entity):
         '''Téléporte le personnage vers l'objet spécifié'''
         self.position = [int(coords[0]), int(coords[1])]
         self.update()
-
-   
-
         # if distancePerso < 34:
         #     if timer%360 == 1:
         #         pass # TODO gérer les attaques
 
+
+
+class Npc(pygame.sprite.Sprite):
+    def __init__(self, nom, vitesse, sprite,position=[0,0]):
+        super().__init__()  # Appel au constructeur de pygame.sprite.Sprite
+        self.nom = nom
+        self.vitesse = vitesse 
+        self.sprite_sheet = pygame.image.load(sprite)
+        self.image = self.get_image(0,0)
+        self.rect = self.image.get_rect()
+        self.image.set_colorkey([0,0,0])
+        self.position=position
+    def get_image(self,x,y):
+        image = pygame.Surface([32, 32])
+        image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
+        return image
 
 class Ennemis:
     def __init__(self,ennemisList={}):
@@ -192,3 +185,22 @@ class Ennemis:
                 
                 self.ennemisList[ennemiActuel[0]]= Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6],ennemiActuel[7],ennemiActuel[8])
                 ennemiActuel = []
+
+class Arme(pygame.sprite.Sprite):
+    def __init__(self, nom, degat, sprite):
+        super().__init__()
+        self.nom = nom
+        self.degat = degat
+        self.sprite = sprite
+        self.sprite_sheet = pygame.image.load(sprite)
+        self.image = self.get_image(0,0)
+        self.rect = self.image.get_rect()
+        self.image.set_colorkey([0,0,0])
+
+    def animer(self, x, y):
+        self.image = self.get_image(x,y)
+        self.image.set_colorkey([0,0,0])
+    def get_image(self,x,y):
+        image = pygame.Surface([32, 32])
+        image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
+        return image
