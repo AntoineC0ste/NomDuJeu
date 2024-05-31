@@ -29,7 +29,7 @@ class Game:
         print(self.checkpointList)
         #generer un joueur
         spawn1 = self.tmx_data.get_object_by_name("Spawn_Player1")
-        self.player = personnagePrincipal.ennemisList["Hero"]
+        self.player = personnagePrincipal.ennemisList["Joueur_Principale"]
 
         if not os.path.exists("Sauvegardes/personnage.json") or self.isded: # Si une sauvegarde n'existe pas ou que le joueur doit respawn
             self.player.position[0] = spawn1.x

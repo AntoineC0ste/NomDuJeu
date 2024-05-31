@@ -9,8 +9,7 @@ baton = Arme("baton", 2, "Image/baton.png") # TODO changer l'image pour un vrai 
 
 if not os.path.exists("Sauvegardes/personnage.json"):
 
-    personnagePrincipal.ajouter("Hero", 50, 5, 2, 3,
-                        sprite="Image/Joueur_Principale.png",
+    personnagePrincipal.ajouter("Joueur_Principale",50, 5, 2, 3,
                         position=[0, 0],
                         inventaire=[],
                         arme=baton)
@@ -20,12 +19,10 @@ else:
 if not os.path.exists("Sauvegardes/ennemis.json"):
 
     ennemisDeBase.ajouter("Slime", 15,2,2,4,
-                        sprite="Image/Slime.png",
                         position=[300,200],
                         inventaire=[])
 
-    ennemisDeBase.ajouter("MONSIEUR Porc", 25, 7, 3, 3,
-                        sprite="Image/Sanglier.png",
+    ennemisDeBase.ajouter("Sanglier", 25, 7, 3, 3,
                         position=[300,300],
                         inventaire=[])
 else:
@@ -33,4 +30,4 @@ else:
 
 #(villageois)
 
-villageois.append(Npc("Paul", 1, "Image/Paul.png", position=[200,200]))
+villageois.append(Npc("Paul", 1, position=[200,200]))

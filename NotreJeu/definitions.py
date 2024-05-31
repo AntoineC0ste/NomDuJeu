@@ -4,19 +4,26 @@ from random import *
 # Définition des classes de base
 
 class Entity(pygame.sprite.Sprite) :
-    def __init__(self, nom, vitesse, sprite, position=[0,0]):  
+    def __init__(self, nom, vitesse, position=[0,0]):  
         super().__init__() 
+        
         self.nom = nom
         self.vitesse = vitesse
-        self.sprite = sprite # Pour la sauvegarde
-        self.sprite_sheet = pygame.image.load(sprite)
-        self.image = self.get_image(0,0)
+        self.sprite_sheet = pygame.image.load(f'Image/{nom}.png')
+        self.image = self.get_image(0, 0)
+        self.images = {
+            "up": self.get_image(0, 96),
+            "down": self.get_image(0, 0),
+            "right": self.get_image(0, 64),
+            "left": self.get_image(0, 32) }
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
         self.position = position
         self.root = pygame.Rect(0,0,5,5)
         self.posPrec = self.position.copy()
         self.facing = 0 # 0 = N ; 1 = E ; 2 = S ; 3 = O
+
+    
     
     def mvDroite(self, amount): 
         self.position[0] += amount # 0 pour la position sur x, 1 pour y
@@ -50,8 +57,8 @@ class Entity(pygame.sprite.Sprite) :
         return image
 
 class Personnage(Entity):
-    def __init__(self, nom, pv, atk, defense, vitesse, sprite, position, inventaire, arme=None):
-        super().__init__(nom, vitesse, sprite, position)
+    def __init__(self, nom, pv, atk, defense, vitesse, position, inventaire, arme=None):
+        super().__init__(nom,vitesse, position)
         self.pv = pv
         self.atk = atk
         self.defense = defense
@@ -121,8 +128,8 @@ class Personnage(Entity):
         #         pass # TODO gérer les attaques
 
 class Npc(Entity):
-    def __init__(self, nom, vitesse, sprite, position=[0,0]):
-        super().__init__(nom, vitesse, sprite, position)  # Appel au constructeur de Entity et donc de pygame.sprite.Sprite
+    def __init__(self, nom,vitesse, position=[0,0]):
+        super().__init__(nom, vitesse, position)  # Appel au constructeur de Entity et donc de pygame.sprite.Sprite
         self.checkpointsDuNpc = []
 
     def suivreChemin(self, checkpoints):
@@ -156,8 +163,8 @@ class Ennemis:
     def __init__(self,ennemisList={}):
         self.ennemisList= ennemisList
     
-    def ajouter(self, nom, pv, atk, defense, vitesse, sprite, position, inventaire, arme=None):
-        self.ennemisList[nom] = Personnage(nom, pv, atk, defense, vitesse, sprite, position, inventaire, arme)
+    def ajouter(self, nom, pv, atk, defense, vitesse, position, inventaire, arme=None):
+        self.ennemisList[nom] = Personnage(nom, pv, atk, defense, vitesse, position, inventaire, arme)
 
     def retirer(self, nom):
         del(self.ennemisList[nom])
@@ -173,7 +180,8 @@ class Ennemis:
                 ennemiActuel["defense"] = perso["defense"]
                 ennemiActuel["vitesse"] = perso["vitesse"]
                 
-                ennemiActuel["sprite"] = perso["sprite"]
+                
+
                 ennemiActuel["position"] = perso["position"]
                 ennemiActuel["inventaire"] = perso["inventaire"]
 
@@ -199,7 +207,7 @@ class Ennemis:
                     else:
                         ennemiActuel.append(attribut)
                 
-                self.ennemisList[ennemiActuel[0]]= Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6],ennemiActuel[7],ennemiActuel[8])
+                self.ennemisList[ennemiActuel[0]]= Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6],ennemiActuel[7])
                 ennemiActuel = []
 
 class Arme(pygame.sprite.Sprite):
