@@ -22,6 +22,11 @@ class Game:
         map_layer = pyscroll.orthographic.BufferedRenderer(map_data,self.screen.get_size())
         map_layer.zoom = 2.5
 
+        # Créer un dictionnaire de checkpoints pour les pnj
+        self.checkpointList = {}
+        for obj in self.tmx_data.get_layer_by_name("Chemin_NPC"):
+            self.checkpointList[obj.name] = obj
+        print(self.checkpointList)
         #generer un joueur
         spawn1 = self.tmx_data.get_object_by_name("Spawn_Player1")
         self.player = personnagePrincipal.ennemisList["Hero"]
@@ -30,7 +35,6 @@ class Game:
             self.player.position[0] = spawn1.x
             self.player.position[1] = spawn1.y
         
-
         #dessiner le groupe de calques
 
         self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=21)
@@ -72,7 +76,10 @@ class Game:
                     ennemisDeBase.retirer(str(ennemi.nom))
                     break
 
-        
+    def boucleNpc(self, timer):
+        if timer%5 == 1:
+            for villager in villageois:
+                villager.suivreChemin(self.checkpointList)
 
 
     def run(self):
@@ -84,6 +91,7 @@ class Game:
             if ennemisTimer%30 == 1:
                 self.player.attackReady = False
             self.boucleEnnemis(ennemisTimer)
+            self.boucleNpc(ennemisTimer)
             self.player.sauvegarderPos()
             self.entreeDuJoueur()
             self.group.center(self.player.rect.center)

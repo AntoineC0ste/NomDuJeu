@@ -123,8 +123,35 @@ class Personnage(Entity):
 class Npc(Entity):
     def __init__(self, nom, vitesse, sprite, position=[0,0]):
         super().__init__(nom, vitesse, sprite, position)  # Appel au constructeur de Entity et donc de pygame.sprite.Sprite
+        self.checkpointsDuNpc = []
 
-        
+    def suivreChemin(self, checkpoints):
+        if self.checkpointsDuNpc == []:
+            for nom, point in checkpoints.items():
+                if self.nom in nom:
+                    self.checkpointsDuNpc.append(point)
+        point = self.checkpointsDuNpc[0]
+        vecteurDistancePoint = [point.x - self.position[0], point.y - self.position[1]]
+        distancePoint = (vecteurDistancePoint[0]**2 + vecteurDistancePoint[1]**2)**0.5 # On normalise le vecteur
+        print(f"Point [{point.x}, {point.y}] \n PNJ {self.position} \n {vecteurDistancePoint}\n")
+        if round(distancePoint) != 0:
+            if abs(vecteurDistancePoint[0]) > abs(vecteurDistancePoint[1]):
+                if vecteurDistancePoint[0] > 0: # Si a gauche
+                    self.mvDroite(self.vitesse)
+                    self.animer(32,32)
+                else:
+                    self.mvGauche(self.vitesse)
+                    self.animer(32,0)
+            else:
+                if vecteurDistancePoint[1] < 0:
+                    self.mvHaut(self.vitesse)
+                    self.animer(0,32)
+                else:
+                    self.mvBas(self.vitesse)
+                    self.animer(0,0)
+        else:
+            del(self.checkpointsDuNpc[0])
+
 class Ennemis:
     def __init__(self,ennemisList={}):
         self.ennemisList= ennemisList

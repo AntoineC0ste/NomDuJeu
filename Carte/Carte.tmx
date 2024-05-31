@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="70" tilewidth="32" tileheight="32" infinite="0" nextlayerid="39" nextobjectid="218">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="70" tilewidth="32" tileheight="32" infinite="0" nextlayerid="39" nextobjectid="220">
  <tileset firstgid="1" source="RPG_Nature_Tilset.tsx"/>
  <tileset firstgid="181" source="Dungeon_Tilset.tsx"/>
  <tileset firstgid="469" source="Dungeon_n2.tsx"/>
@@ -1713,7 +1713,11 @@
   </object>
  </objectgroup>
  <objectgroup id="38" name="Chemin_NPC">
-  <object id="166" name="Paul_1" x="320" y="352" width="30.6667" height="31.3333"/>
-  <object id="169" name="Paul_2" x="128" y="353" width="31" height="32"/>
+  <object id="218" name="Paul_1" x="352.5" y="368">
+   <point/>
+  </object>
+  <object id="219" name="Paul_2" x="160" y="369">
+   <point/>
+  </object>
  </objectgroup>
 </map>
