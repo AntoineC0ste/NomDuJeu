@@ -5,6 +5,7 @@ import os
 
 from initialisations import *
 from definitions import *
+
 pygame.init()
 
 
@@ -26,7 +27,7 @@ class Game:
         self.checkpointList = {}
         for obj in self.tmx_data.get_layer_by_name("Chemin_NPC"):
             self.checkpointList[obj.name] = obj
-        print(self.checkpointList)
+
         #generer un joueur
         spawn1 = self.tmx_data.get_object_by_name("Spawn_Player1")
         self.player = personnagePrincipal.ennemisList["Joueur_Principale"]
@@ -39,15 +40,19 @@ class Game:
 
         self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=21)
 
-
         self.group.add(self.player)
         self.group.add(self.player.arme)
         for personnage in ennemisDeBase.ennemisList.values():
             self.group.add(personnage)
             if personnage.arme is not None:
                 self.group.add(personnage.arme)
+    
         for villager in villageois:
             self.group.add(villager)
+
+        # charger les autres éléments du jeu
+        police = pygame.font.SysFont("Arial", 36)
+        self.barreDeVie = ProgressBar(16, 128, (0,0,255))
 
     def entreeDuJoueur(self):
         entree = pygame.key.get_pressed() # Liste des entrées du joueur
@@ -97,6 +102,8 @@ class Game:
             self.group.center(self.player.rect.center)
             self.group.update()
             self.group.draw(self.screen)
+
+            self.barreDeVie.render(self.screen, 0, 0, self.player.pv, 50)
 
             pygame.display.flip() #pour actualiser tout en boucle a temps réel
 

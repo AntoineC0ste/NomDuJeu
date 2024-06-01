@@ -1,6 +1,8 @@
 import json
 import pygame
+from math import *
 from random import *
+
 # Définition des classes de base
 
 class Entity(pygame.sprite.Sprite) :
@@ -118,7 +120,9 @@ class Personnage(Entity):
                 else:
                     self.mvBas(self.vitesse)
                     self.animer(0,0)
-    
+        elif timer%30 == 1 and distancePerso < 40: 
+            self.attaquer(hero)
+        
     def teleport(self, coords):
         '''Téléporte le personnage vers l'objet spécifié'''
         self.position = [int(coords[0]), int(coords[1])]
@@ -140,7 +144,7 @@ class Npc(Entity):
         point = self.checkpointsDuNpc[0]
         vecteurDistancePoint = [point.x - self.position[0], point.y - self.position[1]]
         distancePoint = (vecteurDistancePoint[0]**2 + vecteurDistancePoint[1]**2)**0.5 # On normalise le vecteur
-        print(f"Point [{point.x}, {point.y}] \n PNJ {self.position} \n {vecteurDistancePoint}\n")
+        # print(f"Point [{point.x}, {point.y}] \n PNJ {self.position} \n {vecteurDistancePoint}\n") à ne remettre que pour débugger
         if round(distancePoint) != 0:
             if abs(vecteurDistancePoint[0]) > abs(vecteurDistancePoint[1]):
                 if vecteurDistancePoint[0] > 0: # Si a gauche
@@ -228,3 +232,28 @@ class Arme(pygame.sprite.Sprite):
         image = pygame.Surface([32, 32])
         image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
         return image
+
+class Element():
+    def __init__(self, largeur=32, hauteur=32, color=(255,255,255)):
+        self.image = pygame.Surface((largeur,hauteur))
+        self.image.fill(color)
+    
+    def render(self, surf, x, y):
+        surf.blit(self.image, (x, y))
+
+class Text(Element):
+    def __init__(self, text, font, color):
+        self.image = font.render(text, True, color)
+
+class ProgressBar(Element):
+    def __init__(self, largeur, hauteur, couleur):
+        super().__init__(hauteur, largeur)
+        self.color = couleur
+
+    
+    def render(self, surf, x, y, valeur, cible):
+        surf.blit(self.image, (x+4, y+4))
+        for i in range(round((self.image.get_width()/cible)*valeur)-4): # Largeur de chaque pv pour obtenir la largeur max, multiplié par la valeur actuelle.
+            Element(self.image.get_width()/cible, self.image.get_height()-3, self.color).render(surf, i+6, y+6)
+
+
