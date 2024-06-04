@@ -12,6 +12,9 @@ pygame.init()
 
 class Game:
     def __init__(self):
+
+        self.appuiBouton=0
+
         self.screen=pygame.display.set_mode((1000, 576))
         pygame.display.set_caption(("notreJeu")) #c'est juste le nom
         self.running= True
@@ -54,7 +57,7 @@ class Game:
         police = pygame.font.SysFont("Arial", 36)
         self.barreDeVie = ProgressBar(16, 128, (0,0,255))
 
-    def entreeDuJoueur(self):
+    def entreeDuJoueur(self):        
         entree = pygame.key.get_pressed() # Liste des entrées du joueur
         if entree[pygame.K_s] or entree[pygame.K_DOWN]:
             self.player.mvBas(self.player.vitesse)
@@ -69,7 +72,13 @@ class Game:
             self.player.mvGauche(self.player.vitesse)
             self.player.animer(0,32)
         elif entree[pygame.K_e]:
-            self.player.attackReady = True
+            if self.appuisBouton < 1:
+                self.player.attackReady = True
+                self.appuisBouton += 1
+                print("appuisBouton = ",self.appuisBouton)
+        
+        if not entree[pygame.K_e]:
+            self.appuisBouton = 0
 
     def boucleEnnemis(self, timer):
         if timer%5 == 1: # Délai d'un douzième de seconde (60/12 = 5)
@@ -93,7 +102,7 @@ class Game:
 
         while self.running: #garder la fenetre ouverte
             ennemisTimer += 1
-            if ennemisTimer%30 == 1:
+            if ennemisTimer%20 == 1:
                 self.player.attackReady = False
             self.boucleEnnemis(ennemisTimer)
             self.boucleNpc(ennemisTimer)

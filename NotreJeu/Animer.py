@@ -1,17 +1,18 @@
 import pygame
 
 class AnimationSprite(pygame.sprite.Sprite):
-    def __init__(self,nom):
+    def __init__(self,sprite):
         super().__init__()
-        self.sprite_sheet = pygame.image.load(f'Image/{nom}.png')
+        self.sprite=sprite
+        self.sprite_sheet = pygame.image.load(f'Image/{sprite}.png')
         self.animation_index = 0
         self.images = {
             "up": self.get_images(96),
             "down": self.get_images(0),
             "right": self.get_images(64),
             "left": self.get_images(32) }
-    def change_animation(self, nom):
-        self.image = self.images[nom][self.animation_index]
+    def change_animation(self, sprite):
+        self.image = self.images[sprite][self.animation_index]
         self.image.set_colorkey(0,0)
         self.animation_index+=1
         

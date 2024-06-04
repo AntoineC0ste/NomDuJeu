@@ -2,15 +2,15 @@ import json
 import pygame
 from math import *
 from random import *
-
+import time
 from Animer import AnimationSprite
 
 # Définition des classes de base
 
 class Entity(AnimationSprite) :
-    def __init__(self, nom, vitesse, position=[0,0]):  
-        super().__init__(nom) 
-        
+    def __init__(self, nom, vitesse,sprite,position=[0,0]):  
+        super().__init__(sprite) 
+
         self.nom = nom
         self.vitesse = vitesse
         self.image = self.get_image(0, 0)
@@ -18,7 +18,7 @@ class Entity(AnimationSprite) :
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
         self.position = position
-        self.root = pygame.Rect(0,0,5,5)
+        self.root = pygame.Rect(0, 0, self.rect.width * 0.5, 12)
         self.posPrec = self.position.copy()
         self.facing = 0 # 0 = N ; 1 = E ; 2 = S ; 3 = O
 
@@ -42,19 +42,17 @@ class Entity(AnimationSprite) :
 
     def sauvegarderPos(self):
         self.posPrec = self.position.copy()
-    def animer(self, x, y):
-        self.image = self.get_image(x,y)
-        self.image.set_colorkey([0,0,0])
+    
     def update(self):
-        self.rect.center = self.position
+        self.rect.topleft = self.position
         self.root.midbottom = self.rect.midbottom
 
 
     
 
 class Personnage(Entity):
-    def __init__(self, nom, pv, atk, defense, vitesse, position, inventaire, arme=None):
-        super().__init__(nom,vitesse, position)
+    def __init__(self, nom, pv, atk, defense, vitesse,sprite, position, inventaire, arme=None):
+        super().__init__(nom,vitesse,sprite, position)
         self.pv = pv
         self.atk = atk
         self.defense = defense
@@ -89,6 +87,7 @@ class Personnage(Entity):
         if self.arme is not None:
             degat = self.atk + self.arme.degat
         else:
+            
             degat = self.atk
         cible.subirDegat(degat)
 
@@ -124,10 +123,13 @@ class Personnage(Entity):
         # if distancePerso < 34:
         #     if timer%360 == 1:
         #         pass # TODO gérer les attaques
+    def animer(self,x,y):
+        self.image = self.get_image(x,y)
+        self.image.set_colorkey([0,0,0])
 
 class Npc(Entity):
-    def __init__(self, nom,vitesse, position=[0,0]):
-        super().__init__(nom, vitesse, position)  # Appel au constructeur de Entity et donc de pygame.sprite.Sprite
+    def __init__(self, nom,vitesse, sprite,position=[0,0]):
+        super().__init__(nom, vitesse,sprite, position)  # Appel au constructeur de Entity et donc de pygame.sprite.Sprite
         self.checkpointsDuNpc = []
 
     def suivreChemin(self, checkpoints):
@@ -156,13 +158,16 @@ class Npc(Entity):
                     self.animer(0,0)
         else:
             del(self.checkpointsDuNpc[0])
+    def animer(self,x,y):
+        self.image = self.get_image(x,y)
+        self.image.set_colorkey([0,0,0])
 
 class Ennemis:
-    def __init__(self,ennemisList={}):
-        self.ennemisList= ennemisList
+    def __init__(self):
+        self.ennemisList={}
     
-    def ajouter(self, nom, pv, atk, defense, vitesse, position, inventaire, arme=None):
-        self.ennemisList[nom] = Personnage(nom, pv, atk, defense, vitesse, position, inventaire, arme)
+    def ajouter(self, nom, pv, atk, defense, vitesse,sprite, position, inventaire, arme=None):
+        self.ennemisList[nom] = Personnage(nom, pv, atk, defense, vitesse,sprite, position, inventaire, arme)
 
     def retirer(self, nom):
         del(self.ennemisList[nom])
@@ -177,7 +182,7 @@ class Ennemis:
                 ennemiActuel["atk"] = perso["atk"]
                 ennemiActuel["defense"] = perso["defense"]
                 ennemiActuel["vitesse"] = perso["vitesse"]
-                
+                ennemiActuel["sprite"] = perso["sprite"]
                 
 
                 ennemiActuel["position"] = perso["position"]
@@ -205,7 +210,7 @@ class Ennemis:
                     else:
                         ennemiActuel.append(attribut)
                 
-                self.ennemisList[ennemiActuel[0]]= Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6],ennemiActuel[7])
+                self.ennemisList[ennemiActuel[0]]= Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6],ennemiActuel[7],ennemiActuel[8])
                 ennemiActuel = []
 
 class Arme(pygame.sprite.Sprite):
