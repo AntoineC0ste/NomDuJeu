@@ -3,21 +3,18 @@ import pygame
 from math import *
 from random import *
 
+from Animer import AnimationSprite
+
 # Définition des classes de base
 
-class Entity(pygame.sprite.Sprite) :
+class Entity(AnimationSprite) :
     def __init__(self, nom, vitesse, position=[0,0]):  
-        super().__init__() 
+        super().__init__(nom) 
         
         self.nom = nom
         self.vitesse = vitesse
-        self.sprite_sheet = pygame.image.load(f'Image/{nom}.png')
         self.image = self.get_image(0, 0)
-        self.images = {
-            "up": self.get_image(0, 96),
-            "down": self.get_image(0, 0),
-            "right": self.get_image(0, 64),
-            "left": self.get_image(0, 32) }
+        
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
         self.position = position
@@ -53,10 +50,7 @@ class Entity(pygame.sprite.Sprite) :
         self.root.midbottom = self.rect.midbottom
 
 
-    def get_image(self,x,y):
-        image = pygame.Surface([32, 32])
-        image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
-        return image
+    
 
 class Personnage(Entity):
     def __init__(self, nom, pv, atk, defense, vitesse, position, inventaire, arme=None):
@@ -77,16 +71,16 @@ class Personnage(Entity):
                 # On suit la position du personnage
                 if self.facing == 0: 
                     self.arme.rect.midbottom = self.rect.midtop
-                    self.arme.animer(32,32)
+                    self.arme.animer(0,32)
                 elif self.facing == 1: 
                     self.arme.rect.midleft = self.rect.midright
-                    self.arme.animer(0,32)
+                    self.arme.animer(32,0)
                 elif self.facing == 2: 
                     self.arme.rect.midtop = self.rect.midbottom
                     self.arme.animer(0,0)
                 elif self.facing == 3: 
                     self.arme.rect.midright = self.rect.midleft
-                    self.arme.animer(32,0)
+                    self.arme.animer(32,32)
             else:
                 self.arme.animer(64,64) # On vient chercher une image transparente
                 
