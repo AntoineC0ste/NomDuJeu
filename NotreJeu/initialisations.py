@@ -18,12 +18,12 @@ else:
 
 if not os.path.exists("Sauvegardes/ennemis.json"):
 
-    ennemisDeBase.ajouter("Slime", 15,2,2,4,
-                        position=[300,200],
+    ennemisDeBase.ajouter("Slime", 50,2,2,4,
+                        position=[300,400],
                         inventaire=[])
 
     ennemisDeBase.ajouter("Sanglier", 25, 7, 3, 3,
-                        position=[300,300],
+                        position=[300,500],
                         inventaire=[])
 else:
     ennemisDeBase.charger("ennemis")
