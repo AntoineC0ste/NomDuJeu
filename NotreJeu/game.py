@@ -15,6 +15,8 @@ class Game:
 
         self.appuiBouton=0
         self.dashbouton=0
+        self.rechargementDash=0
+        self.rechargementAtk=0
 
         self.screen=pygame.display.set_mode((1000, 576))
         pygame.display.set_caption(("notreJeu")) #c'est juste le nom
@@ -68,14 +70,21 @@ class Game:
             self.player.mvDroite()
         if entree[pygame.K_q]:
             self.player.mvGauche()
-        if entree[pygame.K_SPACE]:
+        if entree[pygame.K_SPACE] and self.rechargementDash>50: 
             if self.dashbouton < 6:
                 self.player.dash()
                 self.dashbouton += 1
+            if self.dashbouton>=4:         
+                self.rechargementDash=0  
+                
         elif not entree[pygame.K_SPACE]:
             self.dashbouton = 0
+            self.rechargementDash+=1
+            if self.rechargementDash>1000:
+                self.rechargementDash=70
             
-        if entree[pygame.K_e]:
+        if entree[pygame.K_e] and self.rechargementAtk>25:
+            self.rechargementAtk=0
             if self.appuisBouton < 1:
                 self.player.attackReady = True
                 self.appuisBouton += 1
@@ -83,7 +92,9 @@ class Game:
         
         if not entree[pygame.K_e]:
             self.appuisBouton = 0
-
+            self.rechargementAtk+=1
+            if self.rechargementAtk>200:
+                self.rechargementAtk=20
     def boucleEnnemis(self, timer):
         if timer%5 == 1: # Délai d'un douzième de seconde (60/12 = 5)
             for ennemi in ennemisDeBase.ennemisList.values():
