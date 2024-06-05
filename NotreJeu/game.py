@@ -14,6 +14,7 @@ class Game:
     def __init__(self):
 
         self.appuiBouton=0
+        self.dashbouton=0
 
         self.screen=pygame.display.set_mode((1000, 576))
         pygame.display.set_caption(("notreJeu")) #c'est juste le nom
@@ -59,19 +60,22 @@ class Game:
 
     def entreeDuJoueur(self):        
         entree = pygame.key.get_pressed() # Liste des entrées du joueur
-        if entree[pygame.K_s] or entree[pygame.K_DOWN]:
-            self.player.mvBas(self.player.vitesse)
-            self.player.animer(0,0)
-        elif entree[pygame.K_z] or entree[pygame.K_UP]:
-            self.player.mvHaut(self.player.vitesse)
-            self.player.animer(0,96)
-        elif entree[pygame.K_d] or entree[pygame.K_RIGHT]:
-            self.player.mvDroite(self.player.vitesse)
-            self.player.animer(0,64)
-        elif entree[pygame.K_q] or entree[pygame.K_LEFT]:
-            self.player.mvGauche(self.player.vitesse)
-            self.player.animer(0,32)
-        elif entree[pygame.K_e]:
+        if entree[pygame.K_z]:
+            self.player.mvHaut()
+        if entree[pygame.K_s]:
+            self.player.mvBas()
+        if entree[pygame.K_d]:
+            self.player.mvDroite()
+        if entree[pygame.K_q]:
+            self.player.mvGauche()
+        if entree[pygame.K_SPACE]:
+            if self.dashbouton < 6:
+                self.player.dash()
+                self.dashbouton += 1
+        elif not entree[pygame.K_SPACE]:
+            self.dashbouton = 0
+            
+        if entree[pygame.K_e]:
             if self.appuisBouton < 1:
                 self.player.attackReady = True
                 self.appuisBouton += 1
