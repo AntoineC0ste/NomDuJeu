@@ -2,66 +2,75 @@ import json
 import pygame
 from math import *
 from random import *
-
+import time
 from Animer import AnimationSprite
 
 # Définition des classes de base
 
 class Entity(AnimationSprite) :
-    def __init__(self, nom, vitesse, position=[0,0]):  
-        super().__init__(nom) 
-        
+    def __init__(self, nom, vitesse,sprite,nbAnime,position=[0,0]):  
+        super().__init__(sprite,nbAnime) 
+
         self.nom = nom
-        self.vitesse = vitesse
+        self.vitesse =  vitesse
         self.image = self.get_image(0, 0)
         
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
         self.position = position
-        self.root = pygame.Rect(0,0,5,5)
+        self.root = pygame.Rect(0, 0, self.rect.width * 0.5, 12)
         self.posPrec = self.position.copy()
         self.facing = 0 # 0 = N ; 1 = E ; 2 = S ; 3 = O
-
     
-    
-    def mvDroite(self, amount): 
-        self.position[0] += amount # 0 pour la position sur x, 1 pour y
+    def mvDroite(self): 
+        self.change_animation("right")
+        self.position[0] += self.vitesse # 0 pour la position sur x, 1 pour y        
         self.facing = 1
-    def mvGauche(self, amount):
-        self.position[0] -= amount 
+    def mvGauche(self):
+        self.change_animation("left")
+        self.position[0] -= self.vitesse 
         self.facing = 3
-    def mvHaut(self, amount):
-        self.position[1] -= amount
+    def mvHaut(self):
+        self.change_animation("up")
+        self.position[1] -= self.vitesse
         self.facing = 0
-    def mvBas(self, amount):
-        self.position[1] += amount
+    def mvBas(self):
+        self.change_animation("down")
+        self.position[1] += self.vitesse
         self.facing = 2
+    def dash(self):
+        if self.facing == 0:
+            self.position[1] -= 10
+        if self.facing == 1:
+            self.position[0] += 10
+        if self.facing == 2:
+            self.position[1] += 10
+        if self.facing == 3:
+            self.position[0] -= 10
+    
     def reculer(self):
         self.position = self.posPrec
         self.update()
 
     def sauvegarderPos(self):
         self.posPrec = self.position.copy()
-    def animer(self, x, y):
-        self.image = self.get_image(x,y)
-        self.image.set_colorkey([0,0,0])
+    
     def update(self):
-        self.rect.center = self.position
+        self.rect.topleft = self.position
         self.root.midbottom = self.rect.midbottom
 
 
     
 
 class Personnage(Entity):
-    def __init__(self, nom, pv, atk, defense, vitesse, position, inventaire, arme=None):
-        super().__init__(nom,vitesse, position)
+    def __init__(self, nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire, arme=None):
+        super().__init__(nom,vitesse,sprite,nbAnime, position)
         self.pv = pv
         self.atk = atk
         self.defense = defense
         self.inventaire = inventaire
         self.arme = arme
         self.attackReady = False
-        
 
     def update(self):
         self.rect.center = self.position
@@ -89,6 +98,7 @@ class Personnage(Entity):
         if self.arme is not None:
             degat = self.atk + self.arme.degat
         else:
+            
             degat = self.atk
         cible.subirDegat(degat)
 
@@ -97,23 +107,29 @@ class Personnage(Entity):
             self.pv-=(degat-self.defense)
 
     def activation(self, hero, timer):
-        vecteurDistancePerso = [hero.position[0] - self.position[0], hero.position[1] - self.position[1]]
+        '''Déplacement d'un ennemi vers l'entité spécifiée.'''
+        vecteurDistancePerso = [hero.position[0] - self.position[0], hero.position[1] - self.position[1]] # vecteur v(Xb - Xa, Yb - Ya)
         distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5 # On normalise le vecteur
         if  40 < distancePerso < 300:
-            if randint(0,1) == 0:
+            tropProcheX=False
+            tropProcheY=False
+            #if randint(0,100) <=50:
+            if -10 < self.position[0]-hero.position[0] < 10:
+                 tropProcheX=True
+            if not tropProcheX:
                 if self.position[0] < hero.position[0]: # Si a gauche
-                    self.mvDroite(self.vitesse)
-                    self.animer(32,32)
+                    self.mvDroite()                    
                 else:
-                    self.mvGauche(self.vitesse)
-                    self.animer(32,0)
-            else:
+                    self.mvGauche()   
+
+            if -10 < self.position[1]-hero.position[1] < 10:
+                tropProcheY=True
+            if not tropProcheY:
                 if self.position[1] > hero.position[1]:
-                    self.mvHaut(self.vitesse)
-                    self.animer(0,32)
+                    self.mvHaut()                   
                 else:
-                    self.mvBas(self.vitesse)
-                    self.animer(0,0)
+                    self.mvBas()   
+
         elif timer%30 == 1 and distancePerso < 40: 
             self.attaquer(hero)
         
@@ -124,13 +140,17 @@ class Personnage(Entity):
         # if distancePerso < 34:
         #     if timer%360 == 1:
         #         pass # TODO gérer les attaques
+    def animer(self,x,y):
+        self.image = self.get_image(x,y)
+        self.image.set_colorkey([0,0,0])
 
 class Npc(Entity):
-    def __init__(self, nom,vitesse, position=[0,0]):
-        super().__init__(nom, vitesse, position)  # Appel au constructeur de Entity et donc de pygame.sprite.Sprite
+    def __init__(self, nom,vitesse, sprite,nbAnime,position=[0,0]):
+        super().__init__(nom, vitesse,sprite,nbAnime, position)  # Appel au constructeur de Entity et donc de pygame.sprite.Sprite
         self.checkpointsDuNpc = []
 
     def suivreChemin(self, checkpoints):
+        '''Suit un chemin de points de passage selon le dictionnaire spécifié.'''
         if self.checkpointsDuNpc == []:
             for nom, point in checkpoints.items():
                 if self.nom in nom:
@@ -142,49 +162,52 @@ class Npc(Entity):
         if round(distancePoint) != 0:
             if abs(vecteurDistancePoint[0]) > abs(vecteurDistancePoint[1]):
                 if vecteurDistancePoint[0] > 0: # Si a gauche
-                    self.mvDroite(self.vitesse)
-                    self.animer(32,32)
+                    self.mvDroite()
                 else:
-                    self.mvGauche(self.vitesse)
-                    self.animer(32,0)
+                    self.mvGauche()                    
             else:
                 if vecteurDistancePoint[1] < 0:
-                    self.mvHaut(self.vitesse)
-                    self.animer(0,32)
+                    self.mvHaut()                    
                 else:
-                    self.mvBas(self.vitesse)
-                    self.animer(0,0)
+                    self.mvBas()                    
         else:
             del(self.checkpointsDuNpc[0])
+    def animer(self,x,y):
+        self.image = self.get_image(x,y)
+        self.image.set_colorkey([0,0,0])
 
-class Ennemis:
-    def __init__(self,ennemisList={}):
-        self.ennemisList= ennemisList
+class Sauvegarde:
+    def __init__(self):
+        self.ennemisList={}
     
-    def ajouter(self, nom, pv, atk, defense, vitesse, position, inventaire, arme=None):
-        self.ennemisList[nom] = Personnage(nom, pv, atk, defense, vitesse, position, inventaire, arme)
+    def ajouter(self, nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire, arme=None):
+        '''Ajoute un Personnage dans la sauvegarde.'''
+        self.ennemisList[nom] = Personnage(nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire, arme)
 
     def retirer(self, nom):
         del(self.ennemisList[nom])
+
     def sauvegarder(self, emplacementSave):
+        '''écrit la sauvegarde dans le fichier nommé par l'argument.'''
         with open("Sauvegardes/"+emplacementSave+".json", 'w', newline='') as jsonfile : # On ouvre/crée le fichier json, puis on le manipule avec la bibliothèque.
             ennemisDict = {}
             for perso in self.ennemisList.values():  # Pour chaque ennemi
-                ennemiActuel = {} # On crée un dictionnaire de ses attributs
-                perso = perso.__dict__
+                ennemiActuel = {} 
+                perso = perso.__dict__ # On crée un dictionnaire de ses attributs
+                
                 ennemiActuel["nom"] = perso["nom"] # Obligé de faire ça à cause de Pygame qui ajoute des trucs avec la superclasse Sprite
                 ennemiActuel["pv"] = perso["pv"]
                 ennemiActuel["atk"] = perso["atk"]
                 ennemiActuel["defense"] = perso["defense"]
                 ennemiActuel["vitesse"] = perso["vitesse"]
-                
-                
-
+                ennemiActuel["sprite"] = perso["sprite"]
+                ennemiActuel["nbAnime"] = perso["nbAnime"]
                 ennemiActuel["position"] = perso["position"]
                 ennemiActuel["inventaire"] = perso["inventaire"]
 
                 if perso['arme'] is not None:
-                    ennemiActuel['arme'] = [perso['arme'].__dict__["nom"], perso['arme'].__dict__["degat"], perso['arme'].__dict__["sprite"]]
+                    armeActuelle = perso['arme'].__dict__
+                    ennemiActuel['arme'] = [armeActuelle["nom"], armeActuelle["degat"], armeActuelle["sprite"]]
                 else:
                     ennemiActuel["arme"] = perso["arme"]
     
@@ -205,7 +228,7 @@ class Ennemis:
                     else:
                         ennemiActuel.append(attribut)
                 
-                self.ennemisList[ennemiActuel[0]]= Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6],ennemiActuel[7])
+                self.ennemisList[ennemiActuel[0]]= Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6],ennemiActuel[7],ennemiActuel[8],ennemiActuel[9])
                 ennemiActuel = []
 
 class Arme(pygame.sprite.Sprite):

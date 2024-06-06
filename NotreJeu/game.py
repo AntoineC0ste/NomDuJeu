@@ -12,9 +12,15 @@ pygame.init()
 
 class Game:
     def __init__(self):
+
+        self.appuiBouton=0
+        self.dashbouton=0
+        self.rechargementDash=0
+        self.rechargementAtk=0
+
         self.screen=pygame.display.set_mode((1000, 576))
         pygame.display.set_caption(("notreJeu")) #c'est juste le nom
-        self.running= True
+        self.running = True
         self.isded = False # Si le joueur est mort
         
         #charger la carte
@@ -54,22 +60,41 @@ class Game:
         police = pygame.font.SysFont("Arial", 36)
         self.barreDeVie = ProgressBar(16, 128, (0,0,255))
 
-    def entreeDuJoueur(self):
+    def entreeDuJoueur(self):        
         entree = pygame.key.get_pressed() # Liste des entrées du joueur
-        if entree[pygame.K_s] or entree[pygame.K_DOWN]:
-            self.player.mvBas(self.player.vitesse)
-            self.player.animer(0,0)
-        elif entree[pygame.K_z] or entree[pygame.K_UP]:
-            self.player.mvHaut(self.player.vitesse)
-            self.player.animer(0,96)
-        elif entree[pygame.K_d] or entree[pygame.K_RIGHT]:
-            self.player.mvDroite(self.player.vitesse)
-            self.player.animer(0,64)
-        elif entree[pygame.K_q] or entree[pygame.K_LEFT]:
-            self.player.mvGauche(self.player.vitesse)
-            self.player.animer(0,32)
-        elif entree[pygame.K_e]:
-            self.player.attackReady = True
+        if entree[pygame.K_z]:
+            self.player.mvHaut()
+        if entree[pygame.K_s]:
+            self.player.mvBas()
+        if entree[pygame.K_d]:
+            self.player.mvDroite()
+        if entree[pygame.K_q]:
+            self.player.mvGauche()
+        if entree[pygame.K_SPACE] and self.rechargementDash>50: 
+            if self.dashbouton < 6:
+                self.player.dash()
+                self.dashbouton += 1
+            if self.dashbouton>=4:         
+                self.rechargementDash=0  
+                
+        elif not entree[pygame.K_SPACE]:
+            self.dashbouton = 0
+            self.rechargementDash+=1
+            if self.rechargementDash>1000:
+                self.rechargementDash=70
+            
+        if entree[pygame.K_e] and self.rechargementAtk>25:
+            self.rechargementAtk=0
+            if self.appuisBouton < 1:
+                self.player.attackReady = True
+                self.appuisBouton += 1
+                print("appuisBouton = ",self.appuisBouton)
+        
+        if not entree[pygame.K_e]:
+            self.appuisBouton = 0
+            self.rechargementAtk+=1
+            if self.rechargementAtk>200:
+                self.rechargementAtk=20
 
     def boucleEnnemis(self, timer):
         if timer%5 == 1: # Délai d'un douzième de seconde (60/12 = 5)
@@ -93,7 +118,7 @@ class Game:
 
         while self.running: #garder la fenetre ouverte
             ennemisTimer += 1
-            if ennemisTimer%30 == 1:
+            if ennemisTimer%20 == 1:
                 self.player.attackReady = False
             self.boucleEnnemis(ennemisTimer)
             self.boucleNpc(ennemisTimer)
@@ -136,7 +161,7 @@ class Game:
                     self.running=False    # si oui running= False et la boucle sarrete
             if self.player.pv == 0:
                 self.isded = True
-                personnagePrincipal.ennemisList["Hero"].pv = 50
+                personnagePrincipal.ennemisList["Joueur_Principale"].pv = 50
                 personnagePrincipal.sauvegarder("personnage")
                 self.running = False
             else:
