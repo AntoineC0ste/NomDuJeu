@@ -2,8 +2,8 @@ import os
 from definitions import *
 
 
-ennemisDeBase = Ennemis()
-personnagePrincipal = Ennemis()
+ennemisDeBase = Sauvegarde()
+personnagePrincipal = Sauvegarde()
 villageois = []
 baton = Arme("baton", 2, "Image/baton.png") # TODO changer l'image pour un vrai baton
 

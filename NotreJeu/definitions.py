@@ -40,13 +40,13 @@ class Entity(AnimationSprite) :
         self.facing = 2
     def dash(self):
         if self.facing == 0:
-            self.position[1]-=10
+            self.position[1] -= 10
         if self.facing == 1:
-            self.position[0]+=10
+            self.position[0] += 10
         if self.facing == 2:
-            self.position[1]+=10
+            self.position[1] += 10
         if self.facing == 3:
-            self.position[0]-=10
+            self.position[0] -= 10
     
     def reculer(self):
         self.position = self.posPrec
@@ -107,27 +107,29 @@ class Personnage(Entity):
             self.pv-=(degat-self.defense)
 
     def activation(self, hero, timer):
-        vecteurDistancePerso = [hero.position[0] - self.position[0], hero.position[1] - self.position[1]]
+        '''Déplacement d'un ennemi vers l'entité spécifiée.'''
+        vecteurDistancePerso = [hero.position[0] - self.position[0], hero.position[1] - self.position[1]] # vecteur v(Xb - Xa, Yb - Ya)
         distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5 # On normalise le vecteur
         if  40 < distancePerso < 300:
-            tropProche1=False
-            tropProche2=False
+            tropProcheX=False
+            tropProcheY=False
             #if randint(0,100) <=50:
-            if -10<self.position[0]-hero.position[0]<10:
-                 tropProche1=True
-            if not tropProche1:
+            if -10 < self.position[0]-hero.position[0] < 10:
+                 tropProcheX=True
+            if not tropProcheX:
                 if self.position[0] < hero.position[0]: # Si a gauche
                     self.mvDroite()                    
                 else:
-                    self.mvGauche()                   
-            if-10<self.position[1]-hero.position[1]<10:
-                tropProche2=True
-            if not tropProche2:
-                
+                    self.mvGauche()   
+
+            if -10 < self.position[1]-hero.position[1] < 10:
+                tropProcheY=True
+            if not tropProcheY:
                 if self.position[1] > hero.position[1]:
                     self.mvHaut()                   
                 else:
-                    self.mvBas()                   
+                    self.mvBas()   
+
         elif timer%30 == 1 and distancePerso < 40: 
             self.attaquer(hero)
         
@@ -148,6 +150,7 @@ class Npc(Entity):
         self.checkpointsDuNpc = []
 
     def suivreChemin(self, checkpoints):
+        '''Suit un chemin de points de passage selon le dictionnaire spécifié.'''
         if self.checkpointsDuNpc == []:
             for nom, point in checkpoints.items():
                 if self.nom in nom:
@@ -173,21 +176,25 @@ class Npc(Entity):
         self.image = self.get_image(x,y)
         self.image.set_colorkey([0,0,0])
 
-class Ennemis:
+class Sauvegarde:
     def __init__(self):
         self.ennemisList={}
     
     def ajouter(self, nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire, arme=None):
+        '''Ajoute un Personnage dans la sauvegarde.'''
         self.ennemisList[nom] = Personnage(nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire, arme)
 
     def retirer(self, nom):
         del(self.ennemisList[nom])
+
     def sauvegarder(self, emplacementSave):
+        '''écrit la sauvegarde dans le fichier nommé par l'argument.'''
         with open("Sauvegardes/"+emplacementSave+".json", 'w', newline='') as jsonfile : # On ouvre/crée le fichier json, puis on le manipule avec la bibliothèque.
             ennemisDict = {}
             for perso in self.ennemisList.values():  # Pour chaque ennemi
-                ennemiActuel = {} # On crée un dictionnaire de ses attributs
-                perso = perso.__dict__
+                ennemiActuel = {} 
+                perso = perso.__dict__ # On crée un dictionnaire de ses attributs
+                
                 ennemiActuel["nom"] = perso["nom"] # Obligé de faire ça à cause de Pygame qui ajoute des trucs avec la superclasse Sprite
                 ennemiActuel["pv"] = perso["pv"]
                 ennemiActuel["atk"] = perso["atk"]
@@ -195,12 +202,12 @@ class Ennemis:
                 ennemiActuel["vitesse"] = perso["vitesse"]
                 ennemiActuel["sprite"] = perso["sprite"]
                 ennemiActuel["nbAnime"] = perso["nbAnime"]
-
                 ennemiActuel["position"] = perso["position"]
                 ennemiActuel["inventaire"] = perso["inventaire"]
 
                 if perso['arme'] is not None:
-                    ennemiActuel['arme'] = [perso['arme'].__dict__["nom"], perso['arme'].__dict__["degat"], perso['arme'].__dict__["sprite"]]
+                    armeActuelle = perso['arme'].__dict__
+                    ennemiActuel['arme'] = [armeActuelle["nom"], armeActuelle["degat"], armeActuelle["sprite"]]
                 else:
                     ennemiActuel["arme"] = perso["arme"]
     

@@ -20,7 +20,7 @@ class Game:
 
         self.screen=pygame.display.set_mode((1000, 576))
         pygame.display.set_caption(("notreJeu")) #c'est juste le nom
-        self.running= True
+        self.running = True
         self.isded = False # Si le joueur est mort
         
         #charger la carte
@@ -95,6 +95,7 @@ class Game:
             self.rechargementAtk+=1
             if self.rechargementAtk>200:
                 self.rechargementAtk=20
+
     def boucleEnnemis(self, timer):
         if timer%5 == 1: # Délai d'un douzième de seconde (60/12 = 5)
             for ennemi in ennemisDeBase.ennemisList.values():
@@ -160,7 +161,7 @@ class Game:
                     self.running=False    # si oui running= False et la boucle sarrete
             if self.player.pv == 0:
                 self.isded = True
-                personnagePrincipal.ennemisList["Hero"].pv = 50
+                personnagePrincipal.ennemisList["Joueur_Principale"].pv = 50
                 personnagePrincipal.sauvegarder("personnage")
                 self.running = False
             else:
