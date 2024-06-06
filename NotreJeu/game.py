@@ -58,7 +58,8 @@ class Game:
 
         # charger les autres éléments du jeu
         police = pygame.font.SysFont("Arial", 36)
-        self.barreDeVie = ProgressBar(16, 128, (0,0,255))
+        self.barreDeVie = ProgressBar(16, 128, (255,0,0))
+        self.barreDash = ProgressBar(16, 128, (0,0,255))
 
     def entreeDuJoueur(self):        
         entree = pygame.key.get_pressed() # Liste des entrées du joueur
@@ -70,18 +71,18 @@ class Game:
             self.player.mvDroite()
         if entree[pygame.K_q]:
             self.player.mvGauche()
-        if entree[pygame.K_SPACE] and self.rechargementDash>50: 
+        if entree[pygame.K_SPACE] and self.rechargementDash > 150: 
             if self.dashbouton < 6:
                 self.player.dash()
                 self.dashbouton += 1
-            if self.dashbouton>=4:         
-                self.rechargementDash=0  
+            if self.dashbouton >= 4:         
+                self.rechargementDash -= 150  
                 
         elif not entree[pygame.K_SPACE]:
             self.dashbouton = 0
             self.rechargementDash+=1
             if self.rechargementDash>1000:
-                self.rechargementDash=70
+                self.rechargementDash=1000
             
         if entree[pygame.K_e] and self.rechargementAtk>25:
             self.rechargementAtk=0
@@ -127,7 +128,8 @@ class Game:
             self.group.center(self.player.rect.center)
             self.group.update()
             self.group.draw(self.screen)
-
+            
+            self.barreDash.render(self.screen, 130, 0, self.rechargementDash/10, 100)
             self.barreDeVie.render(self.screen, 0, 0, self.player.pv, 50)
 
             pygame.display.flip() #pour actualiser tout en boucle a temps réel

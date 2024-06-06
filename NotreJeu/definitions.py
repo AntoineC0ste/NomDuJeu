@@ -271,6 +271,6 @@ class ProgressBar(Element):
     def render(self, surf, x, y, valeur, cible):
         surf.blit(self.image, (x+4, y+4))
         for i in range(round((self.image.get_width()/cible)*valeur)-4): # Largeur de chaque pv pour obtenir la largeur max, multiplié par la valeur actuelle.
-            Element(self.image.get_width()/cible, self.image.get_height()-3, self.color).render(surf, i+6, y+6)
+            Element(self.image.get_width()/cible, self.image.get_height()-3, self.color).render(surf, i+x+6, y+6)
 
 
