@@ -1,7 +1,7 @@
 import os
 from definitions import *
 
-
+bossGame= SauvegardeBoss()
 ennemisDeBase = Sauvegarde()
 personnagePrincipal = Sauvegarde()
 villageois = []
@@ -12,7 +12,7 @@ if not os.path.exists("Sauvegardes/personnage.json"):
     personnagePrincipal.ajouter("Joueur_Principale",50, 5, 2, 3,
                         sprite= "Joueur_Principale",
                         nbAnime=3,
-                        position=[0, 0],
+                        position=[0, 0], 
                         inventaire=[],
                         arme=baton)
 else:
@@ -26,6 +26,9 @@ if not os.path.exists("Sauvegardes/ennemis.json"):
                         position=[7920,5450],
                         inventaire=[]
                         )
+
+                    
+    
     ennemisDeBase.ajouter("Slime2", 15,5,2,3,
                         sprite= "Slime",
                         nbAnime=4,
@@ -50,10 +53,16 @@ if not os.path.exists("Sauvegardes/ennemis.json"):
                         position=[9000,5500],
                         inventaire=[]
                         )
-
                         
 else:
     ennemisDeBase.charger("ennemis")
+
+if not os.path.exists("Sauvegardes/boss"):
+        bossGame.ajouter("Dragon", 150,20,2,0,
+                        position=[9200,5555],
+                        )
+else:
+     bossGame.charger("boss")
 
 #(villageois)
 

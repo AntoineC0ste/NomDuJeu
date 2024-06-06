@@ -37,7 +37,8 @@ class Game:
         #generer un joueur
         spawn1 = self.tmx_data.get_object_by_name("Spawn_Player1")
         self.player = personnagePrincipal.ennemisList["Joueur_Principale"]
-
+        self.boss = bossGame.ennemisList["Dragon"]
+        self.boss.arme = AttaqueSpeciale("FireBall", 500, "Image/baton.png", self.player)
         if not os.path.exists("Sauvegardes/personnage.json") or self.isded: # Si une sauvegarde n'existe pas ou que le joueur doit respawn
             self.player.position[0] = spawn1.x
             self.player.position[1] = spawn1.y
@@ -45,14 +46,14 @@ class Game:
         #dessiner le groupe de calques
 
         self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=21)
-
+        self.group.add(self.boss)
         self.group.add(self.player)
         self.group.add(self.player.arme)
         for personnage in ennemisDeBase.ennemisList.values():
             self.group.add(personnage)
             if personnage.arme is not None:
                 self.group.add(personnage.arme)
-    
+
         for villager in villageois:
             self.group.add(villager)
 
@@ -99,6 +100,7 @@ class Game:
 
     def boucleEnnemis(self, timer):
         if timer%5 == 1: # Délai d'un douzième de seconde (60/12 = 5)
+            self.boss.activation(self.player)
             for ennemi in ennemisDeBase.ennemisList.values():
                 ennemi.sauvegarderPos()
                 ennemi.activation(self.player, timer)
@@ -170,7 +172,7 @@ class Game:
                 personnagePrincipal.sauvegarder("personnage")
             clock.tick(60)
 
-        
+        bossGame.sauvegarder("boss")
         ennemisDeBase.sauvegarder("ennemis")
         pygame.quit()   #quitter le jeu
 

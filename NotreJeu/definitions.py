@@ -3,13 +3,13 @@ import pygame
 from math import *
 from random import *
 import time
-from Animer import AnimationSprite
+from Animer import *
 
 # Définition des classes de base
 
 class Entity(AnimationSprite) :
-    def __init__(self, nom, vitesse,sprite,nbAnime,position=[0,0]):  
-        super().__init__(sprite,nbAnime) 
+    def __init__(self, nom, vitesse, sprite, nbAnime, position=[0,0]):  
+        super().__init__(sprite, nbAnime) 
 
         self.nom = nom
         self.vitesse =  vitesse
@@ -60,7 +60,6 @@ class Entity(AnimationSprite) :
         self.root.midbottom = self.rect.midbottom
 
 
-    
 
 class Personnage(Entity):
     def __init__(self, nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire, arme=None):
@@ -144,6 +143,81 @@ class Personnage(Entity):
         self.image = self.get_image(x,y)
         self.image.set_colorkey([0,0,0])
 
+        
+class Boss(AnimationSpriteBoss):
+    def __init__(self, nom, pv, atk, defense, vitesse, position, arme=None):  
+        super().__init__() 
+
+        self.nom = nom
+        self.pv = pv
+        self.atk = atk
+        self.defense = defense
+        self.vitesse = vitesse
+        self.arme = arme
+        self.image = self.get_image(0, 0)
+        
+        self.rect = self.image.get_rect()
+        self.image.set_colorkey([0,0,0])
+        self.position = position
+        self.root = pygame.Rect(0, 0, self.rect.width * 0.5, 12)
+        self.posPrec = self.position.copy()
+        self.facing = 0 # 0 = N ; 1 = E ; 2 = S ; 3 = O
+    
+    def mvDroite(self): 
+        self.change_animation("right")
+        self.position[0] += self.vitesse # 0 pour la position sur x, 1 pour y        
+        self.facing = 1
+    def mvGauche(self):
+        self.change_animation("left")
+        self.position[0] -= self.vitesse 
+        self.facing = 3
+    def mvHaut(self):
+        self.change_animation("up")
+        self.position[1] -= self.vitesse
+        self.facing = 0
+    def mvBas(self):
+        self.change_animation("down")
+        self.position[1] += self.vitesse
+        self.facing = 2
+    
+    def update(self):
+        
+        self.rect.center = self.position
+        self.root.center = self.rect.center
+        if self.arme is not None:
+            # if self.attackReady:
+                # On suit la position du personnage
+                if self.facing == 0: 
+                    self.arme.position = self.rect.midtop
+                    self.arme.animer(0,32)
+                elif self.facing == 1: 
+                    self.arme.position = self.rect.midright
+                    self.arme.animer(32,0)
+                elif self.facing == 2: 
+                    self.arme.position = self.rect.midbottom
+                    self.arme.animer(0,0)
+                elif self.facing == 3: 
+                    self.arme.position = self.rect.midleft
+                    self.arme.animer(32,32)
+            # else:
+            #     self.arme.animer(64,64) # On vient chercher une image transparente
+                
+    def activation(self, hero):
+        if abs(self.position[0]-hero.position[0])>abs(self.position[1]-hero.position[1]): 
+            if self.position[0]<hero.position[0]:
+                self.mvGauche()
+            elif self.position[0]>hero.position[0]:
+                self.mvHaut()
+        else:
+            if self.position[1]<hero.position[1]:
+                self.mvDroite()
+            elif self.position[1]>hero.position[1]:
+                self.mvBas()
+        
+        if self.clock%10 == 1:
+            self.arme.bouleDeFeu()
+
+
 class Npc(Entity):
     def __init__(self, nom,vitesse, sprite,nbAnime,position=[0,0]):
         super().__init__(nom, vitesse,sprite,nbAnime, position)  # Appel au constructeur de Entity et donc de pygame.sprite.Sprite
@@ -180,9 +254,9 @@ class Sauvegarde:
     def __init__(self):
         self.ennemisList={}
     
-    def ajouter(self, nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire, arme=None):
+    def ajouter(self, nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire,arme=None):
         '''Ajoute un Personnage dans la sauvegarde.'''
-        self.ennemisList[nom] = Personnage(nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire, arme)
+        self.ennemisList[nom] = Personnage(nom, pv, atk, defense, vitesse,sprite,nbAnime, position, inventaire,arme)
 
     def retirer(self, nom):
         del(self.ennemisList[nom])
@@ -231,6 +305,60 @@ class Sauvegarde:
                 self.ennemisList[ennemiActuel[0]]= Personnage(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6],ennemiActuel[7],ennemiActuel[8],ennemiActuel[9])
                 ennemiActuel = []
 
+class SauvegardeBoss():
+    def __init__(self):
+        self.ennemisList={}
+    
+    def ajouter(self, nom, pv, atk, defense, vitesse, position, arme=None):
+        '''Ajoute un Personnage dans la sauvegarde.'''
+        self.ennemisList[nom] = Boss(nom, pv, atk, defense, vitesse, position, arme)
+
+    def retirer(self, nom):
+        del(self.ennemisList[nom])
+
+    def sauvegarder(self, emplacementSave):
+        '''écrit la sauvegarde dans le fichier nommé par l'argument.'''
+        with open("Sauvegardes/"+emplacementSave+".json", 'w', newline='') as jsonfile : # On ouvre/crée le fichier json, puis on le manipule avec la bibliothèque.
+            ennemisDict = {}
+            for perso in self.ennemisList.values():  # Pour chaque ennemi
+                ennemiActuel = {} 
+                perso = perso.__dict__ # On crée un dictionnaire de ses attributs
+                
+                ennemiActuel["nom"] = perso["nom"] # Obligé de faire ça à cause de Pygame qui ajoute des trucs avec la superclasse Sprite
+                ennemiActuel["pv"] = perso["pv"]
+                ennemiActuel["atk"] = perso["atk"]
+                ennemiActuel["defense"] = perso["defense"]
+                ennemiActuel["vitesse"] = perso["vitesse"]
+                ennemiActuel["position"] = perso["position"]
+
+                if perso['arme'] is not None:
+                    armeActuelle = perso['arme'].__dict__
+                    ennemiActuel['arme'] = [armeActuelle["nom"], armeActuelle["degat"], armeActuelle["sprite"]]
+                else:
+                    ennemiActuel["arme"] = perso["arme"]
+    
+                ennemisDict[perso["nom"]] = ennemiActuel
+
+            json.dump(ennemisDict, jsonfile, indent=4) # Et on l'écrit dans le fichier JSON
+
+    def charger(self, emplacementSave): # C'est la même chose que la sauvegarde mais avec une liste d'attributs
+        with open("Sauvegardes/"+emplacementSave+".json", "r") as jsonfile:
+            charge = json.load(jsonfile)
+            
+            self.ennemisList = {}
+            ennemiActuel = []
+            for perso in charge.values():
+                for nom, attribut in perso.items():
+                    if nom == "arme" and attribut is not None:
+                        ennemiActuel.append(Arme(attribut[0], attribut[1], attribut[2]))
+                    else:
+                        ennemiActuel.append(attribut)
+                
+                self.ennemisList[ennemiActuel[0]]= Boss(ennemiActuel[0],ennemiActuel[1],ennemiActuel[2],ennemiActuel[3],ennemiActuel[4],ennemiActuel[5],ennemiActuel[6])
+                ennemiActuel = []
+
+
+
 class Arme(pygame.sprite.Sprite):
     def __init__(self, nom, degat, sprite):
         super().__init__()
@@ -250,6 +378,45 @@ class Arme(pygame.sprite.Sprite):
         image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
         return image
 
+class AttaqueSpeciale(Arme):
+    def __init__(self, nom, degat, sprite, hero):
+        super().__init__(nom, degat, sprite)
+        self.hero = hero
+        self.position = [0,0]
+    
+    def mvDroite(self): 
+        self.position[0] += 2 # 0 pour la position sur x, 1 pour y        
+    def mvGauche(self):
+        self.position[0] -= 2 
+    def mvHaut(self):
+        self.position[1] -= 2
+    def mvBas(self):
+        self.position[1] += 2
+
+        
+
+    def bouleDeFeu(self):
+        self.animer(0,0)
+        if self.rect.size != (64, 64):
+            self.rect.inflate_ip(2,2)
+        self.go_to_ennemy(self.hero)
+        
+    def go_to_ennemy(self, hero):
+        vecteurDistancePerso = [hero.position[0] - self.position[0], hero.position[1] - self.position[1]] # vecteur v(Xb - Xa, Yb - Ya)
+        distancePerso = (vecteurDistancePerso[0]**2 + vecteurDistancePerso[1]**2)**0.5 # On normalise le vecteur
+        if round(distancePerso) != 0:
+            if abs(vecteurDistancePerso[0]) > abs(vecteurDistancePerso[1]):
+                if vecteurDistancePerso[0] > 0: # Si a gauche
+                    self.mvDroite()
+                else:
+                    self.mvGauche()                    
+            else:
+                if vecteurDistancePerso[1] < 0:
+                    self.mvHaut()                    
+                else:
+                    self.mvBas()    
+
+        
 class Element():
     def __init__(self, largeur=32, hauteur=32, color=(255,255,255)):
         self.image = pygame.Surface((largeur,hauteur))
