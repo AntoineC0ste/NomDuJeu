@@ -156,6 +156,7 @@ class Boss(AnimationSpriteBoss):
         self.arme = arme
         self.image = self.get_image(0, 0)
         
+        self.attackReady = True
         self.rect = self.image.get_rect()
         self.image.set_colorkey([0,0,0])
         self.position = position
@@ -185,7 +186,7 @@ class Boss(AnimationSpriteBoss):
         self.rect.center = self.position
         self.root.center = self.rect.center
         if self.arme is not None:
-            # if self.attackReady:
+            if self.attackReady:
                 # On suit la position du personnage
                 if self.facing == 0: 
                     self.arme.position = self.rect.midtop
@@ -199,6 +200,8 @@ class Boss(AnimationSpriteBoss):
                 elif self.facing == 3: 
                     self.arme.position = self.rect.midleft
                     self.arme.animer(32,32)
+                self.arme.rect.center = self.arme.position
+                self.arme.timer += 1
             # else:
             #     self.arme.animer(64,64) # On vient chercher une image transparente
                 
@@ -213,9 +216,13 @@ class Boss(AnimationSpriteBoss):
                 self.mvDroite()
             elif self.position[1]>hero.position[1]:
                 self.mvBas()
-        
-        if self.clock%10 == 1:
+
+        print(self.arme.position)
+        if self.arme.timer%10 == 0:
+            self.attackReady = False
             self.arme.bouleDeFeu()
+            if self.arme.rect.colliderect(hero.rect):
+                self.attackReady = True
 
 
 class Npc(Entity):
@@ -331,11 +338,11 @@ class SauvegardeBoss():
                 ennemiActuel["vitesse"] = perso["vitesse"]
                 ennemiActuel["position"] = perso["position"]
 
-                if perso['arme'] is not None:
-                    armeActuelle = perso['arme'].__dict__
-                    ennemiActuel['arme'] = [armeActuelle["nom"], armeActuelle["degat"], armeActuelle["sprite"]]
-                else:
-                    ennemiActuel["arme"] = perso["arme"]
+                # if perso['arme'] is not None:
+                #     armeActuelle = perso['arme'].__dict__
+                #     ennemiActuel['arme'] = [armeActuelle["nom"], armeActuelle["degat"], armeActuelle["sprite"], armeActuelle["hero"]]
+                # else:
+                ennemiActuel["arme"] = None
     
                 ennemisDict[perso["nom"]] = ennemiActuel
 
@@ -350,7 +357,7 @@ class SauvegardeBoss():
             for perso in charge.values():
                 for nom, attribut in perso.items():
                     if nom == "arme" and attribut is not None:
-                        ennemiActuel.append(Arme(attribut[0], attribut[1], attribut[2]))
+                        ennemiActuel.append(AttaqueSpeciale(attribut[0], attribut[1], attribut[2], attribut[3]))
                     else:
                         ennemiActuel.append(attribut)
                 
@@ -383,8 +390,9 @@ class AttaqueSpeciale(Arme):
     def __init__(self, nom, degat, sprite, hero):
         super().__init__(nom, degat, sprite)
         self.hero = hero
-        self.position = [0,0]
-    
+        self.position = [9335,5570]
+        self.timer = 0
+
     def mvDroite(self): 
         self.position[0] += 2 # 0 pour la position sur x, 1 pour y        
     def mvGauche(self):
@@ -416,7 +424,7 @@ class AttaqueSpeciale(Arme):
                     self.mvHaut()                    
                 else:
                     self.mvBas()    
-
+        print(self.position)
         
 class Element():
     def __init__(self, largeur=32, hauteur=32, color=(255,255,255)):
