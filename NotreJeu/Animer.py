@@ -71,19 +71,16 @@ class AnimationSpriteBoss(pygame.sprite.Sprite):
         return image
     
 class AnimationSpriteAttaque(pygame.sprite.Sprite):
-    def __init__(self,sprite,name,nbAnime):
+    def __init__(self):
         super().__init__()
-        self.nbAnime=nbAnime
-        self.name=name
         self.clock = 0
-        self.sprite=sprite
-        self.sprite_sheet = pygame.image.load(f'Image/{name}.png')
+        self.sprite_sheet = pygame.image.load(f'Image/Baton.jpg')
         self.animation_index = 0
         self.images = {
-            "up": self.get_images(96),
+            "up": self.get_images(0),
             "down": self.get_images(0),
-            "right": self.get_images(64),
-            "left": self.get_images(32) }
+            "right": self.get_images(0),
+            "left": self.get_images(0) }
     def change_animation(self, sprite):
         self.image = self.images[sprite][self.animation_index]
         self.image.set_colorkey(0,0)
@@ -94,15 +91,15 @@ class AnimationSpriteAttaque(pygame.sprite.Sprite):
                 self.animation_index=0
             self.clock=0
         
-    def get_images(self, y):
+    def get_images(self, x):
         images=[]
-        for i in range(0,self.nbAnime):
-            x = i*32
+        for i in range(0,4):
+            y = i*50
             image = self.get_image(x, y)
             images.append(image)
         return images
 
     def get_image(self,x,y):
-        image = pygame.Surface([32,32])
-        image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
+        image = pygame.Surface([40,50])
+        image.blit(self.sprite_sheet, (0, 0), (x, y, 40, 50))
         return image

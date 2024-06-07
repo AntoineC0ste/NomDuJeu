@@ -359,7 +359,7 @@ class SauvegardeBoss():
 
 
 
-class Arme(pygame.sprite.Sprite):
+class Arme(AnimationSpriteAttaque):
     def __init__(self, nom, degat, sprite):
         super().__init__()
         self.nom = nom
@@ -377,6 +377,7 @@ class Arme(pygame.sprite.Sprite):
         image = pygame.Surface([32, 32])
         image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
         return image
+    
 
 class AttaqueSpeciale(Arme):
     def __init__(self, nom, degat, sprite, hero):
